@@ -1,2 +1,14 @@
+# Python
 venv/
+__pycache__/
+*.pyc
 .env
+copiar
+# React
+node_modules/
+build/
+dist/
+
+# IDEs
+.vscode/
+.idea/
