@@ -1,0 +1,19 @@
+.subject_list {
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    width: 500px;
+    gap: 20px;
+}
+
+.subject_container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: antiquewhite;
+    height: 100px;
+}
+
+.subject_content {
+    font-size: 1.5rem;
+}
