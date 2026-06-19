@@ -14,5 +14,5 @@ dist/
 .idea/
 
 # Misc
-copiar
-old/
+copiar.txt
+_old/

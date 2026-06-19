@@ -1,2 +1,0 @@
-Refatorar Os Componentes.
-Usar Layout e Outlet.
