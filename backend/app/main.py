@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware 
 from app.database import engine, Base
 from app import models
-from app.routers import subjects
+from app.routers import subjects,users, auth
   
 models.Base.metadata.create_all(bind=engine)
 
@@ -26,7 +26,9 @@ app.add_middleware(
     allow_headers=["*"],         # 4. Permite todos os cabeçalhos HTTP
 )
 
+app.include_router(auth.router)
 app.include_router(subjects.router)
+app.include_router(users.router)
 
 @app.get("/")
 def health_check():
