@@ -1,5 +1,22 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 from typing import Optional
+
+# UserCreate é instanciado internamente pelo FastApi
+class UserCreate(BaseModel):
+    email:EmailStr
+    password:str
+    
+# UserRead é instanciado internamente pelo FastApi
+class UserRead(BaseModel):
+    id:int
+    email:EmailStr
+
+    # class Config é lido pelo FastApi para ter autorização para
+    # ler os dados vindos do banco de dados e passá-los como JSON
+    class Config:
+        from_attributes = True
+
+
 
 # 1. Esquema base com campos comuns
 class SubjectBase(BaseModel):
@@ -17,3 +34,5 @@ class SubjectRead(SubjectBase):
     class Config:
         # Permite que o Pydantic leia objetos do SQLAlchemy (ORM)
         from_attributes = True
+
+

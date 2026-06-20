@@ -1,5 +1,23 @@
 from sqlalchemy.orm import Session
 from app import models, schemas
+from app.security import generate_password_hash
+
+def get_user_by_email(db: Session, email: str):
+    return db.query(models.User).filter(models.User.email == email).first()
+
+def create_user(db: Session, user: schemas.UserCreate):
+    # 1. Criptografa a senha
+    hashed_pwd = generate_password_hash(user.password)
+    # 2. Cria o objeto do SQLAlchemy trocando a senha limpa pelo hash
+    db_user = models.User(
+        email=user.email,
+        hashed_password = hashed_pwd
+    )
+
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return(db_user)
 
 # 1. Create
 def create_subject(db: Session, subject: schemas.SubjectCreate):
