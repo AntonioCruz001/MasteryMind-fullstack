@@ -29,7 +29,7 @@ def login_for_access_token(
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="E-mail ou senha incorretos.",
-            header={"WWW-Authenticate":"Bearer"},
+            headers={"WWW-Authenticate":"Bearer"},
         )
     
     # 3. Se existir, verifica se a senha bate com o hash criptografado do banco
