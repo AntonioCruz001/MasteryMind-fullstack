@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from app import crud, schemas
 from app.database import SessionLocal
 
+
 router = APIRouter(
     prefix="/users",
     tags=["Users (Usuários)"]
@@ -27,3 +28,8 @@ def register_user(user : schemas.UserCreate, db: Session = Depends(get_db)):
             detail="Este e-mail já está cadastrado."
         )
     return crud.create_user(db=db, user=user)
+
+@router.get("/", response_model=list[schemas.UserRead])
+def read_users(db : Session = Depends(get_db)):
+    users = crud.get_users(db)
+    return users if users is not None else []
