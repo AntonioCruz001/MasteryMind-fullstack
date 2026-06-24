@@ -18,7 +18,7 @@ class Subject(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(100), nullable=False)
-    
+    description = Column(String(255))
     # RELACIONAMENTO E CHAVE ESTRANGEIRA (O coração da Etapa 2)
     # Vincula a linha do assunto diretamente ao ID de um usuário na tabela "users"
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
