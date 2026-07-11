@@ -6,7 +6,7 @@ export default function Layout() {
         <div className='layout-wrapper'>
             <Header title="MasteryMind" subtitle="Domine sua memorização" />
             <main >
-                <Outlet />
+                <Outlet/>
                 {/* Futuro Footer */}
             </main>
         </div>
