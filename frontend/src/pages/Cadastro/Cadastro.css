@@ -1,0 +1,25 @@
+.cadastro_container {
+    background-color: aliceblue;
+    width: 800px;
+    height: 400px;
+    margin: 50px auto;
+}
+
+.cadastro_container h1 {
+    color: black;
+    margin: 0 0 20px 0;
+    padding: 2px;
+    font-size: 36px;
+}
+
+.cadastro_wrapper form {
+    color: black;
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    margin: auto auto;
+}
+
+.cadastro_container form label {
+    text-align: left;
+}
