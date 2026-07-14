@@ -7,6 +7,7 @@ function Subjects() {
 
     // Função que busca os dados na API
     useEffect(() => {
+        // busca em : @app.get("/subjects/")
         axios.get('http://127.0.0.1:8000/subjects/')
             .then(response => {
                 setSubjects(response.data)
