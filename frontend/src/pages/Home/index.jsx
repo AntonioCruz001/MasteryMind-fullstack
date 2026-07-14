@@ -5,13 +5,13 @@ import { Outlet } from "react-router-dom";
 import Header from "../../components/Header";
 import NavTabs from "../../components/NavTabs";
 
-export default function Home(props){
+export default function Home(props) {
 
     return (
         <Fragment>
-            <Header/>
-            <NavTabs/>
-            <Outlet/>
+            <Header />
+            <NavTabs />
+            <Outlet />
         </Fragment>
 
     )
