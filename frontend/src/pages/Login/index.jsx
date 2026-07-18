@@ -41,6 +41,15 @@ export default function Login() {
                         className={"w-full bg-brandPrimary hover:bg-teal-700 text-white font-bold py-3 rounded-lg mt-2 shadow-sm hover:shadow-md transition-all cursor-pointer"}>
                         Entrar
                     </Button>
+
+                    <p className='text-sm text-center text-gray-500 mt-6'>
+                        Não tem uma conta? {" "}
+                        <Link to={"/cadastro"}
+                            className='text-brandPrimary hover:text-teal-700 font-semibold hover:underline transition-colors'
+                        >
+                            Criar conta aqui
+                        </Link>
+                    </p>
                 </form>
             </div>
         </div>
