@@ -1,6 +1,6 @@
 # CONTEXTO DO PROJETO E ESPECIFICAÇÃO TÉCNICA
 
-**Projeto:** Memorizer (Plataforma Fullstack de Gestão de Estudos)
+**Projeto:** Memorizer-MasteryMind (Plataforma Fullstack de Gestão de Estudos)
 
 ## 1. Tech Stack
 * **Frontend:** React (Vite), Tailwind CSS, React Router DOM, Context API, Axios (Deploy: Vercel).
