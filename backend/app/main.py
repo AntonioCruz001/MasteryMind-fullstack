@@ -19,6 +19,7 @@ origins = [
     "http://localhost:5173",      # Endereço padrão do Vite (Vue / React moderno)    
 ]
 
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,       # 1. Libera os sites da sua lista

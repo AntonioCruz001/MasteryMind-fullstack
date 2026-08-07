@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
-from app.database import Base  # Certifique-se de importar o seu Base correto
+from app.database import Base  
 
 class User(Base):
     __tablename__ = "users"
