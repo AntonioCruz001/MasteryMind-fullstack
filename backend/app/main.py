@@ -1,11 +1,14 @@
 from fastapi import FastAPI
-from fastapi.security import OAuth2PasswordBearer
 from fastapi.middleware.cors import CORSMiddleware 
+from fastapi.security import OAuth2PasswordBearer
+
 from app.database import engine, Base
-from app import models
 from app.routers import subjects,users, auth
+from app import models
+
+__all__ = ["auth_router", "users_router", "subjects_router"]
   
-models.Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="MasteryMind API",
@@ -16,7 +19,9 @@ app = FastAPI(
 origins = [
     "http://localhost:3000",      # Endereço padrão do React / Next.js
     "http://127.0.0.1:3000",      # IP correspondente ao localhost
-    "http://localhost:5173",      # Endereço padrão do Vite (Vue / React moderno)    
+    "http://localhost:5173",      # Endereço padrão do Vite (Vue / React moderno)
+    "http://127.0.0.1:5173",
+    # "https://seu-frontend.vercel.app",  # Ambiente de produção    
 ]
 
 
@@ -29,8 +34,8 @@ app.add_middleware(
 )
 
 app.include_router(auth.router)
-app.include_router(subjects.router)
 app.include_router(users.router)
+app.include_router(subjects.router)
 
 @app.get("/")
 def health_check():

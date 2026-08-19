@@ -1,10 +1,13 @@
 // Nome temporário
-export default function Aside(){
+import { NavLink } from 'react-router-dom';
 
-return <aside>
-    <NavLink link="/statistics">Estatísticas</NavLink>
-    <NavLink link="/schedule">Agenda</NavLink>
-    {/* Opcoes */}
-    {/* Opcoes */}
-</aside>
+export default function Aside() {
+
+    return (
+        <aside>
+            <NavLink to="/statistics">Estatísticas</NavLink>
+            <NavLink to="/schedule">Agenda</NavLink>
+            {/* Opcoes */}
+            {/* Opcoes */}
+        </aside>)
 }

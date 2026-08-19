@@ -1,36 +1,46 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
+
+import AuthLayout from '../layouts/AuthLayout';
+import HomeLayout from '../layouts/HomeLayout';
+
+import LandingPage from '../pages/LandingPage';
 import Login from '../pages/Login';
+import Cadastro from '../pages/Cadastro';
+
+import Subjects from '../pages/Subjects';
+import Review from '../pages/Review';
+import Statistics from '../pages/Statistics';
+
 import { ProtectedRoute } from './ProtectedRoute';
 
-// Componente temporário para validação do fluxo
-function Dashboard() {
-  return (
-    <div className="min-h-screen bg-brandBg p-8 text-brandText">
-      <h1 className="text-2xl font-bold">Dashboard - Área Protegida</h1>
-    </div>
-  );
-}
+export default function AppRoutes() {
+    return (
+        <Routes>
+            {/* Rotas Públicas */}
+            <Route element={<AuthLayout />}>
+                <Route path='/' element={<LandingPage />} />
+                <Route path='/login' element={<Login />} />
+                <Route path='/cadastro' element={<Cadastro />} />
+            </Route>
 
-export function AppRoutes() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        {/* Rotas Públicas */}
-        <Route path="/login" element={<Login />} />
+            {/* Rotas Protegidas */}
+            <Route element={
+                <ProtectedRoute>
+                    <HomeLayout />
+                </ProtectedRoute>
+            }>
+                <Route path='/home' element={<Navigate to={"/home/subjects"} replace />} />
+                <Route path='/home/subjects' element={<Subjects />} />
+                <Route path='/home/review' element={<Review />} />
+                <Route path='/home/statistics' element={<Statistics />} />
+            </Route>
 
-        {/* Rotas Protegidas */}
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
+            {/* Fallback de rota */}
 
-        {/* Fallback de Rota */}
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
-      </Routes>
-    </BrowserRouter>
-  );
+            {/* // Para teste do subject
+            // Retirar comment!! */}
+
+            <Route path='*' element={<Navigate to={"/"} replace />} />
+        </Routes>
+    )
 }
