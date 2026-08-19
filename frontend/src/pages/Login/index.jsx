@@ -22,7 +22,7 @@ export default function Login() {
 
     try {
       await login(email, password);
-      navigate('/dashboard');
+      navigate('/home/subjects');
     } catch (err) {
       setError('Credenciais inválidas. Verifique seu e-mail e senha.');
     } finally {
