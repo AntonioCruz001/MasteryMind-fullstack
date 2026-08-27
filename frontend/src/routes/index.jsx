@@ -8,6 +8,7 @@ import Login from '../pages/Login';
 import Cadastro from '../pages/Cadastro';
 
 import Subjects from '../pages/Subjects';
+import Flashcards from '../pages/Flashcards';
 import Review from '../pages/Review';
 import Statistics from '../pages/Statistics';
 
@@ -31,6 +32,7 @@ export default function AppRoutes() {
             }>
                 <Route path='/home' element={<Navigate to={"/home/subjects"} replace />} />
                 <Route path='/home/subjects' element={<Subjects />} />
+                <Route path='/home/subjects/:subjectId/flashcards' element={<Flashcards />} />
                 <Route path='/home/review' element={<Review />} />
                 <Route path='/home/statistics' element={<Statistics />} />
             </Route>

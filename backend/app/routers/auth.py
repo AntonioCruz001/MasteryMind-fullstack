@@ -25,7 +25,12 @@ def login_for_access_token(
 ):
     # 1. Busca o usuário no MySQL pelo e-mail
     user = user_crud.get_user_by_email(db, email= credentials.email)
-    
+
+    # Checando bug no login
+    print("Usuário encontrado:", user)
+    if user:
+        print("Senha bateu?", security.verify_password(credentials.password, user.hashed_password))
+
     # 2. Se o usuário não existir, barra o login
     if not user or not security.verify_password(credentials.password, user.hashed_password):
         raise HTTPException(
