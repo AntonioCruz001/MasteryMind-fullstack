@@ -1,23 +1,60 @@
-# CONTEXTO DO PROJETO E ESPECIFICAÇÃO TÉCNICA
+🧠 MasteryMind — Sistema de Repetição Espaçada & Flashcards
 
-**Projeto:** Memorizer-MasteryMind (Plataforma Fullstack de Gestão de Estudos)
+O MasteryMind é uma aplicação web Full-Stack projetada para otimizar o aprendizado e a memorização de longo prazo através do método de Repetição Espaçada (Spaced Repetition System - SRS). A ferramenta permite que usuários criem categorias de estudo, adicionem flashcards interativos e realizem sessões de revisão guiadas por algoritmos de intervalo programado.
+🚀 Funcionalidades Principais
+🔒 Autenticação & Segurança
 
-## 1. Tech Stack
-* **Frontend:** React (Vite), Tailwind CSS, React Router DOM, Context API, Axios (Deploy: Vercel).
-* **Backend:** Python, FastAPI, Pydantic v2, SQLAlchemy 2.0, Alembic (Deploy: Render).
-* **Banco de Dados:** MySQL (Relacional).
-* **Autenticação:** JWT (JSON Web Tokens) via OAuth2 com Bearer Token.
+    Cadastro e Login de Usuários: Sistema de criação de conta com validação de dados em tempo real.
 
-## 2. Diretrizes de Arquitetura e Engenharia
-* **Estrutura de Camadas (Backend):** Separação estrita entre `routers` (endpoints), `schemas` (DTOs/Pydantic), `models` (entidades SQLAlchemy) e `services/crud` (regras de negócio).
-* **SQLAlchemy 2.0:** Uso exclusivo do padrão moderno com `Mapped[]`, `mapped_column()` e consultas via `select()`.
-* **Pydantic v2:** Validação rigorosa de dados de entrada/saída com `ConfigDict(from_attributes=True)`.
-* **Segurança:** Criptografia de senhas (`bcrypt`/`passlib`) e injeção de dependência (`Depends`) para validação de sessão.
+    Segurança de Senhas: Armazenamento seguro de senhas utilizando hash Argon2 e Bcrypt via pwdlib.
 
-## 3. Regras de Negócio e Domínio
-* Gestão de usuários com isolamento de dados (cada usuário acessa apenas seus próprios registros).
-* Organização de estudos em Assuntos (*Subjects*), Tópicos de estudo e Históricos de revisão.
+    Autenticação JWT: Sessões autenticadas via JSON Web Tokens (Bearer Token).
 
-## 4. Estado Atual do Desenvolvimento
-* **Frontend:** `AuthContext`, tela de `Login` (estilizada com Tailwind CSS) e `ProtectedRoute` já implementados.
-* **Próximos Passos:** Modelagem do banco MySQL via SQLAlchemy 2.0, criação das rotas no FastAPI e integração com o frontend.
+    Proteção de Rotas & Sessão: Proteção no Frontend (ProtectedRoute) e interceptor HTTP (Axios) com tratamento de expiração de token e redirecionamento automático para a tela de login.
+
+📚 Gerenciamento de Assuntos (Subjects)
+
+    Categorização de estudos por assuntos/disciplinas (ex: Informática, Direito, Inglês).
+
+    CRUD completo associado isoladamente ao usuário logado.
+
+🎴 Módulo de Flashcards & Repetição Espaçada (SRS)
+
+    Criação e Organização: Flashcards interativos contendo Pergunta (Frente) e Resposta (Verso).
+
+    Efeito Flip Interativo: Animação/Alternância dinâmica de leitura da pergunta/resposta.
+
+    Algoritmo de Revisão:
+
+        Avaliação por feedback de desempenho (Acertei / Fácil vs Errei / Difícil).
+
+        Atualização dinâmica de pontuação (points), repetições (repetitions) e cálculo do próximo ciclo de estudo (next_review_date de 1, 7 a 15 dias).
+
+        Marcação de status de revisão (is_reviewed) com reorganização da fila em tempo real (cards pendentes no topo e revisados ao final).
+
+🛠️ Tecnologias Utilizadas
+Backend
+
+    Linguagem: Python 3.10+
+
+    Framework Web: FastAPI
+
+    Banco de Dados: MySQL
+
+    ORM & Migrações: SQLAlchemy 2.0 & Alembic
+
+    Autenticação & Hash: PyJWT, Pwdlib (Argon2 / Bcrypt)
+
+    Validação de Dados: Pydantic v2
+
+Frontend
+
+    Biblioteca Principal: React 18
+
+    Ferramenta de Build: Vite
+
+    Estilização: Tailwind CSS v4
+
+    Roteamento: React Router DOM v6
+
+    Comunicação HTTP: Axios (com suporte a Interceptors)
