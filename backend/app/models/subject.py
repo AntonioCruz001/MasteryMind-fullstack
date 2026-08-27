@@ -13,3 +13,5 @@ class Subject(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
     user = relationship("User", back_populates="subjects")
+    flashcards = relationship("Flashcard", back_populates="subject", cascade="all, delete-orphan")
+    
