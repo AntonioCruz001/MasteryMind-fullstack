@@ -1,17 +1,60 @@
-# Memorizer - Frontend
+🧠 MasteryMind — Sistema de Repetição Espaçada & Flashcards
 
-Aplicação web desenvolvida para o gerenciamento de estudos e memorização, com foco em arquitetura limpa e integração com API RESTful em Python (FastAPI).
+O MasteryMind é uma aplicação web Full-Stack projetada para otimizar o aprendizado e a memorização de longo prazo através do método de Repetição Espaçada (Spaced Repetition System - SRS). A ferramenta permite que usuários criem categorias de estudo, adicionem flashcards interativos e realizem sessões de revisão guiadas por algoritmos de intervalo programado.
+🚀 Funcionalidades Principais
+🔒 Autenticação & Segurança
 
-## 🚀 Tecnologias Utilizadas
+    Cadastro e Login de Usuários: Sistema de criação de conta com validação de dados em tempo real.
 
-* **React:** Biblioteca principal para construção de interfaces reativas em modelo SPA.
-* **Tailwind CSS:** Framework utilitário para estilização e design responsivo.
-* **React Router DOM:** Gerenciamento de rotas do lado do cliente e controle de navegabilidade.
-* **Axios:** Cliente HTTP para consumo de endpoints e manipulação de cabeçalhos.
-* **Context API:** Gerenciamento do estado global de autenticação e sessão de usuário.
+    Segurança de Senhas: Armazenamento seguro de senhas utilizando hash Argon2 e Bcrypt via pwdlib.
 
-## 📌 Estrutura e Funcionalidades Atual
+    Autenticação JWT: Sessões autenticadas via JSON Web Tokens (Bearer Token).
 
-* **Contexto Global de Autenticação (`AuthContext`):** Persistência de tokens JWT no `localStorage`, injeção automática do cabeçalho `Authorization: Bearer <token>` na instância do Axios e gerenciamento dos estados `user` e `loading`.
-* **Tela de Login:** Interface com entradas controladas, *floating labels* estilizados em Tailwind CSS, tratamento de erros de autenticação e bloqueio visual de submissão dupla.
-* **Guarda de Rotas (`ProtectedRoute`):** Componente wrapper para interceptação de navegação não autorizada, redirecionando usuários não autenticados diretamente para a tela de login.
+    Proteção de Rotas & Sessão: Proteção no Frontend (ProtectedRoute) e interceptor HTTP (Axios) com tratamento de expiração de token e redirecionamento automático para a tela de login.
+
+📚 Gerenciamento de Assuntos (Subjects)
+
+    Categorização de estudos por assuntos/disciplinas (ex: Informática, Direito, Inglês).
+
+    CRUD completo associado isoladamente ao usuário logado.
+
+🎴 Módulo de Flashcards & Repetição Espaçada (SRS)
+
+    Criação e Organização: Flashcards interativos contendo Pergunta (Frente) e Resposta (Verso).
+
+    Efeito Flip Interativo: Animação/Alternância dinâmica de leitura da pergunta/resposta.
+
+    Algoritmo de Revisão:
+
+        Avaliação por feedback de desempenho (Acertei / Fácil vs Errei / Difícil).
+
+        Atualização dinâmica de pontuação (points), repetições (repetitions) e cálculo do próximo ciclo de estudo (next_review_date de 1, 7 a 15 dias).
+
+        Marcação de status de revisão (is_reviewed) com reorganização da fila em tempo real (cards pendentes no topo e revisados ao final).
+
+🛠️ Tecnologias Utilizadas
+Backend
+
+    Linguagem: Python 3.10+
+
+    Framework Web: FastAPI
+
+    Banco de Dados: MySQL
+
+    ORM & Migrações: SQLAlchemy 2.0 & Alembic
+
+    Autenticação & Hash: PyJWT, Pwdlib (Argon2 / Bcrypt)
+
+    Validação de Dados: Pydantic v2
+
+Frontend
+
+    Biblioteca Principal: React 18
+
+    Ferramenta de Build: Vite
+
+    Estilização: Tailwind CSS v4
+
+    Roteamento: React Router DOM v6
+
+    Comunicação HTTP: Axios (com suporte a Interceptors)
