@@ -1,57 +1,35 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { CardContex } from "../pages/Flashcards";
+
 import Button from "./Button";
+
 import FlashcardContent from "./FlashcardContent";
 import ReviewControls from "./ReviewControls";
 
-export default function FlashcardItem() {
-    const { subjectId } = useParams()
-    const [fliped, setFliped] = useState(true);
-    const [frontContent, setFrontContent] = useState('');
-    const [backContent, setBackContent] = useState('');
+export default function FlashcardItem({ key }) {
+    const [fliped, setFliped] = useState(false);
+
+    const card = useContext(CardContex);
+
     const [cardContent, setCardContent] = useState({ front: "", back: "" });
 
-    const [pontos,setPontos] = useState(0)
+    const [pontos, setPontos] = useState(0)
 
-    const [flashcardsArray, setFlashcardsArray] = useState([])
-    const [reviewedCards, setReviewedCards] = useState({})
+    if (!card) return null
+
+    useEffect(() => {
+        setCardContent(card)
+        setPontos(card.points)
+    }, [card])
+
+    // console.log('cardContent: ',cardContent);
+    // console.log('pontos: ',pontos,card.points);
+
 
     function handleFlipClick() {
         { fliped === false ? setFliped(true) : setFliped(false) }
     }
-
-    useEffect(() => {
-        const fetchFlashcards = async () => {
-            try {
-                const response = await api.get(`/subjects/${subjectId}/flashcards`);
-                const cards = response.data;
-
-                const initialReviewedState = {};
-                cards.forEach(card => {
-                    if (card.is_reviwed) {
-                        initialReviewedState[card.id] = true;
-                    }
-                });
-
-                setReviewedCards(initialReviewedState);
-                setFlashcardsArray(cards);
-            } catch (err) {
-                console.log('Erro ao buscar flashcards:', err);
-            }
-        };
-        fetchFlashcards()
-    }, [subjectId])
-
-    // Ordenar - Revisado para o final
-    const sortedFlashcards = useMemo(() => {
-        return [...flashcards].sort((a, b) => {
-            const aReviewed = reviewedCards[a.id] ? 1 : 0;
-            const bReviewed = reviewedCards[b.id] ? 1 : 0;
-
-            return aReviewed - bReviewed; // Não revisados (0) primeiro, revisados (1) ao final
-        });
-    }, [flashcardsArray, reviewedCards]);
-
 
 
 
@@ -69,7 +47,7 @@ export default function FlashcardItem() {
             </div>
 
             {/* frente e verso - conteudo */}
-            <FlashcardContent onClick={handleFlipClick} front={frontContent} back={backContent} />
+            <FlashcardContent fliped={fliped} handleClick={handleFlipClick} />
 
             {/* Botoes */}
             <div>

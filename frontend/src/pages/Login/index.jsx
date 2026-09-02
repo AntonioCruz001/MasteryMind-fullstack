@@ -33,7 +33,7 @@ export default function Login() {
   return (
     <div className="min-h-screen w-full bg-brandBg flex justify-center items-start pt-6 md:pt-10 px-4">
       <div className="w-full max-w-sm flex flex-col gap-3">
-        <Link 
+        <Link
           to="/"
           className="flex items-center gap-1.5 text-xs font-semibold tracking-wide text-gray-400 hover:text-brandPrimary transition-colors self-start"
         >
@@ -80,17 +80,16 @@ export default function Login() {
               </label>
             </div>
 
-            <Button 
+            <Button
               type="submit"
+              title={isSubmitting ? 'Autenticando...' : 'Entrar'}
               disabled={isSubmitting}
-              className="w-full bg-brandPrimary hover:bg-teal-700 text-white font-bold py-3 rounded-lg mt-2 shadow-sm hover:shadow-md transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSubmitting ? 'Autenticando...' : 'Entrar'}
-            </Button>
+              btnType={'criar'}
+            />
 
             <p className="text-sm text-center text-gray-500 mt-6">
               Não tem uma conta?{' '}
-              <Link 
+              <Link
                 to="/cadastro"
                 className="text-brandPrimary hover:text-teal-700 font-semibold hover:underline transition-colors"
               >
