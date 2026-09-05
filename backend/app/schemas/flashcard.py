@@ -10,6 +10,10 @@ class FlashcardBase(BaseModel):
 class FlashcardCreate(FlashcardBase):
     pass
 
+class FlashcardUpdate(FlashcardBase):
+    front: Optional[str] = None
+    back: Optional[str] = None
+
 class FlashcardRead(FlashcardBase):
     id:int
     subject_id: int

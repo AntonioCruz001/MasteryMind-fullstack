@@ -5,13 +5,15 @@ from sqlalchemy.orm import Session
 from app import crud, models
 from app.database import get_db
 from app.core.deps import get_current_user
-from app.schemas.flashcard import FlashcardCreate, FlashcardRead
+from app.schemas.flashcard import FlashcardCreate, FlashcardRead, FlashcardUpdate
 
 router = APIRouter(
     prefix="/subjects/{subject_id}/flashcards",
     tags=["Flashcards"]
 )
 
+# subject_id recebe o valor da URl
+# flashcard recebe automaticamente valor do JSON do api.post e valida no pydantic
 @router.post("/", response_model=FlashcardRead, status_code=status.HTTP_201_CREATED)
 def create_flashcard(
     subject_id: int,
@@ -77,3 +79,32 @@ def review_flashcard_route(
         raise HTTPException(status_code=404, detail="Flashcard não encontrado.")
 
     return updated_card
+
+
+@router.put("/{flashcard_id}", response_model=FlashcardRead)
+def update_flashcard_route(
+    subject_id: int, 
+    flashcard_id:int, 
+    flashcard_in: FlashcardUpdate, 
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+    ):
+    subject = db.query(models.Subject).filter(
+        models.Subject.id == subject_id,
+        models.Subject.user_id == current_user.id
+    ).first()
+    if not subject:
+        raise HTTPException(status_code=404, detail="Assunto não encontrado")
+
+    updated_card = crud.update_flashcard(
+        db=db,
+        flashcard_id=flashcard_id,
+        flashcard_update=flashcard_in
+    )
+    if not updated_card:
+        raise HTTPException(status_code=404, detail="Flashcard não encontrado.")
+
+    return updated_card
+
+    
+

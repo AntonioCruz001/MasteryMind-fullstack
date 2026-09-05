@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
 from app.models.flashcard import Flashcard
-from app.schemas.flashcard  import FlashcardCreate
+from app.schemas.flashcard  import FlashcardCreate, FlashcardUpdate
 from typing import List
 
 def create_flashcard(db: Session, flashcard: FlashcardCreate , subject_id: int) -> Flashcard:
@@ -36,7 +36,7 @@ def review_flashcard(db: Session, flascard_id: int, result: str) -> Flashcard:
 
     if result == "acerto":
         db_flashcard.points +=1
-        db_flashcard.repetitions = min(4, db_flashcard.repetitions + 1)
+        db_flashcard.repetitions = min(4, db_flashcard.repetitions + 1) # min(a,b) retorna o menor dos itens - neste caso, menor que 4 ou 4
 
         if db_flashcard.repetitions == 1:
             db_flashcard.next_review_date = now + timedelta(days=1)
@@ -48,7 +48,7 @@ def review_flashcard(db: Session, flascard_id: int, result: str) -> Flashcard:
             db_flashcard.next_review_date = None
 
     elif result == 'erro':
-        db_flashcard.points = max(0, db_flashcard.points - 1)
+        db_flashcard.points = max(0, db_flashcard.points - 1) # max(a,b) retorna o maior dos itens - neste caso, maior que 0 ou 0
 
         if db_flashcard.repetitions >= 3:
             db_flashcard.repetitions = 2
@@ -61,6 +61,19 @@ def review_flashcard(db: Session, flascard_id: int, result: str) -> Flashcard:
             db_flashcard.points = 0
             db_flashcard.next_review_date = now + timedelta(days=1)
 
+
+    db.commit()
+    db.refresh(db_flashcard)
+    return db_flashcard
+
+def update_flashcard(db: Session, flashcard_id: int, flashcard_update: FlashcardUpdate)-> Flashcard | None:
+    db_flashcard = db.query(Flashcard).filter(Flashcard.id == flashcard_id).first()
+    if not db_flashcard:
+        return None
+
+    updated_data = flashcard_update.model_dump(exclude_unset=True)
+    for field, value in updated_data.items():
+        setattr(db_flashcard, field, value)
 
     db.commit()
     db.refresh(db_flashcard)

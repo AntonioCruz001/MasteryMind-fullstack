@@ -41,11 +41,11 @@ export default function Cadastro() {
 
             // Redireciona para a tela de login após o cadastro com sucesso
             navigate('/login');
-        }catch (err) {
+        } catch (err) {
             // Tratamento caso o FastAPI retorne erro 422 em formato de array do Pydantic
             if (err.response?.status === 442) {
                 setError('Formato inválido de e-mail ou dados incoretos.');
-            }else {
+            } else {
                 setError(
                     typeof err.response?.data?.detail === 'string' ? err.response.data.detail : 'Erro ao realizar cadastro. Tente novamente.'
                 );
@@ -163,9 +163,9 @@ export default function Cadastro() {
 
                         <Button type="submit"
                             disabled={isSubmitting}
-                            className="w-full bg-brandPrimary hover:bg-teal-700 text-white font-bold py-2.5 rounded-lg mt-1 shadow-sm transition-all cursor-pointer text-sm">
-                            {isSubmitting ? 'Cadastrando...' : 'Criar Conta'}
-                        </Button>
+                            btnType={'criar'}
+                            title={isSubmitting ? 'Cadastrando...' : 'Criar Conta'}
+                        />
 
                         <p className='text-sm text-center text-gray-500 mt-1'>
                             Já possui uma conta? {" "}
