@@ -84,7 +84,7 @@ export default function FlashcardModal({ isOpen, onClose, onSubmit, onDelete, in
                 </form>
             </div>
         </div>,
-        document.body
+        document.getElementById('modal')
     );
 
 }

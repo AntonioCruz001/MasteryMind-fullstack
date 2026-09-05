@@ -1,9 +1,14 @@
-import { useState } from "react"
-export default function ReviewControls({cardPontos}) {
+import { useContext, useState } from "react"
+import { CardContex } from "../pages/Flashcards"
+
+export default function ReviewControls() {
+    const card = useContext(CardContex)
+    let cardPontos = card[0].points
+    console.log('card:',card,'cardPontos:',cardPontos);
+    
     // const accentColor = "border-2 border-pink-800"
     const accentColor = "border-2 border-b-indigo-700"
 
-    // let cardPontos = pontos     // Preciso dos pontos do card
 
     const [statusColors, setStatusColors] = useState([
         { actualStatusColor: "bg-gray-500", offStatusColor: "bg-gray-200" },
@@ -29,7 +34,7 @@ export default function ReviewControls({cardPontos}) {
                     <li
                         key={index}
                         className={
-                            `rounded-full h-4 w-4 ${activeIndex === index ?
+                            `rounded-full h-3 w-3 ${activeIndex === index ?
                                 `${color.actualStatusColor} ${accentColor}` : color.offStatusColor}`
                         }
                     ></li>

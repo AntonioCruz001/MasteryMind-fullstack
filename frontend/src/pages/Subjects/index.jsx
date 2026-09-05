@@ -57,10 +57,9 @@ function Subjects() {
                 <h2 className="text-2xl font-bold text-brandText">Categorias</h2>
                 <Button
                     onClick={() => setIsModalOpen(true)}
+                    title={"+ Nova Categoria"}
                     className="bg-brandPrimary hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition-all text-sm cursor-pointer"
-                >
-                    + Nova Categoria
-                </Button>
+                />
             </div>
 
             {/* Lista de Categorias (Cards Clicáveis) */}
@@ -140,17 +139,15 @@ function Subjects() {
                                 <Button
                                     type="button"
                                     onClick={() => setIsModalOpen(false)}
+                                    title={"Cancelar"}
                                     className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2.5 rounded-lg transition-all text-sm cursor-pointer"
-                                >
-                                    Cancelar
-                                </Button>
+                                />
                                 <Button
                                     type="submit"
                                     disabled={loading}
+                                    title={loading ? 'Criando...' : 'Criar Categoria'}
                                     className="flex-1 bg-brandPrimary hover:bg-teal-700 text-white font-bold py-2.5 rounded-lg shadow-sm transition-all text-sm cursor-pointer disabled:opacity-50"
-                                >
-                                    {loading ? 'Criando...' : 'Criar Categoria'}
-                                </Button>
+                                />
                             </div>
                         </form>
                     </div>

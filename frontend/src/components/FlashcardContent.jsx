@@ -13,10 +13,13 @@ export default function FlashcardContent({ fliped, handleClick, ...props }) {
 
     return <div onClick={handleClick} {...props} className="min-h-25 flex flex-col justify-center bg-amber-100 rounded-2xl shadow shadow-taupe-700">
         {!fliped ? <div className="text-center">
-            {card.front}
+            {card[0].front}
+            {console.log('exibindo front')}
+            
         </div> :
             <div className="text-center">
-                {card.back}
+                {card[0].back}
+                {console.log('exibindo back')}
             </div>
         }
     </div>
