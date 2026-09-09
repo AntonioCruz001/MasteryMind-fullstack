@@ -12,12 +12,13 @@ export default function FlashcardItem() {
     const setEdit = func.setEdit
     const setModal = func.setModal
     const reviewCard = func.reviewCard
-    const responseCard = func.responseCard
+    // const responseCard = func.responseCard
 
     function handleFlipClick() {
         { fliped === false ? setFliped(true) : setFliped(false) }
     }
 
+    const cardLevelInicial = card.level
 
     return (
         // wrapper
@@ -32,6 +33,7 @@ export default function FlashcardItem() {
             {/* frente e verso - conteudo */}
             <FlashcardContent fliped={fliped} handleClick={handleFlipClick} />
 
+
             {/* Botoes */}
             <div >
                 {fliped ?
@@ -40,14 +42,14 @@ export default function FlashcardItem() {
                             title={'Errei'}
                             btnType={'erro'}
                             className="text-xs py-0 px-3 h-5 leading-none flex items-center justify-center"
-                            onClick={() => reviewCard(card.id, 'erro')} />
+                            onClick={cardLevelInicial !== 0 ? () => reviewCard(card.id, 'erro') : null} />
                         <Button
                             title={'Acertei'}
                             btnType={'acerto'}
                             className="text-xs py-0 px-3 h-5 leading-none flex items-center justify-center"
                             onClick={() => reviewCard(card.id, 'acerto')} />
                     </div> : <div className="h-5">
-                        
+
                     </div>}
             </div>
         </div>

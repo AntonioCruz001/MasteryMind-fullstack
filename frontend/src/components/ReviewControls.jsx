@@ -17,7 +17,7 @@ export default function ReviewControls({ revIndicator }) {
 
     // busca dos dados do card no backend
     // Map() a partir do index dos pontos - OK
-    console.log('card.next_review_date: ', card.next_review_date);
+    console.log('card.next_review_date: ', card.next_review_date, 'card', card[0]);
 
     const formatDate = (isoString) => {
         if (!isoString) return '';
