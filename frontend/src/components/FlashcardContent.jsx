@@ -9,13 +9,15 @@ export default function FlashcardContent({ fliped, handleClick, ...props }) {
     // Recebendo o card atual do sortedFlashcards.map do Flashcards
     const card = useContext(CardContex)
 
+    // Estilizar a partir do resultado do review
 
-
-    return <div onClick={handleClick} {...props} className="min-h-25 flex flex-col justify-center bg-amber-100 rounded-2xl shadow shadow-taupe-700">
+    return <div onClick={handleClick} {...props} className="min-h-25 flex flex-col justify-center 
+      bg-amber-100 rounded-2xl shadow shadow-taupe-700">
+        
         {!fliped ? <div className="text-center">
             {card[0].front}
             {console.log('exibindo front')}
-            
+
         </div> :
             <div className="text-center">
                 {card[0].back}

@@ -12,7 +12,10 @@ export default function Flashcards() {
     const [flashcardsArray, setFlashcardsArray] = useState([]); // Contem o array dos flashcards
     const [reviewedCards, setReviewedCards] = useState({});     // Array apenas com os cards revisados
     const [isModalOpen, setIsModalOpen] = useState(false)       // Controle de abrir o modal
-    const [editingCard, setEditingCard] = useState(null)
+    const [editingCard, setEditingCard] = useState(null)        // Card atual que está sendo editado ou apagado
+    const [responseCard, setResponseCard] = useState()
+    const [teste, setTeste] = useState('Teste de contexto!')
+    console.log('responseCard', responseCard);
 
     // api.get - Busca dos Cards na API 
     useEffect(() => {
@@ -38,6 +41,7 @@ export default function Flashcards() {
     }, [subjectId])
 
     // Ordenar - Revisado para o final
+    // useMemo para manter o resultado do sort e não ter que refazer a cada render
     const sortedFlashcards = useMemo(() => {
         return [...flashcardsArray].sort((a, b) => {
             const aReviewed = reviewedCards[a.id] ? 1 : 0;
@@ -47,7 +51,7 @@ export default function Flashcards() {
         });
     }, [flashcardsArray, reviewedCards]);
 
-    // api.put e api.post 
+    // api.put (update) e api.post (create) 
     const handleSaveCard = async (cardData) => {
         try {
             if (editingCard) {
@@ -105,16 +109,40 @@ export default function Flashcards() {
         }
     }
 
+    const handleReview = async (cardId, resultado) => {
+        if (!cardId) return;
+        try {
+            const response = await api.post(`/subjects/${subjectId}/flashcards/${cardId}/review`,
+                { result: resultado }
+            )
+            const cardUpdated = response.data;
+
+            setFlashcardsArray((prev) => (
+                prev.map((card) => card.id === cardId ? cardUpdated : card)
+            ))
+
+            setReviewedCards((prev) => ({ ...prev, [cardId]: true }))
+
+            console.log('Revisado: ', cardUpdated);
+        } catch (error) {
+            console.log('Erro ao revisar o card: ', error);
+        }
+    }
+
+    console.log('reviewedCards', reviewedCards);
+
+
     const ctx = {
         subjectId: subjectId,
         setModal: setIsModalOpen,
         setReview: setReviewedCards,
-        setEdit: setEditingCard
+        setEdit: setEditingCard,
+        reviewCard: handleReview,
+        responseCardObj: responseCard,
+        testeContext: teste
     }
 
-
     console.log('editingCard: ', editingCard);
-
 
     return (<div>
         {/* CABEÇALHO */}
@@ -130,13 +158,15 @@ export default function Flashcards() {
 
         {/* ARRAY DE FLASHCARDS */}
 
-        {sortedFlashcards.length === 0 ? <div>Nenhum Flashcard encontrado!</div> :
-            sortedFlashcards.map((card) => (
-                // O value expoxto na prop é o card atual de 'sortedFlashcards'
-                <CardContex.Provider key={card.id} value={[card, ctx]}>
-                    <FlashcardItem />
-                </CardContex.Provider>
-            ))}
+        <div className='flex flex-col gap-3'>
+            {sortedFlashcards.length === 0 ? <div>Nenhum Flashcard encontrado!</div> :
+                sortedFlashcards.map((card) => (
+                    // O value expoxto na prop é o card atual de 'sortedFlashcards'
+                    <CardContex.Provider key={card.id} value={[card, ctx]}>
+                        <FlashcardItem />
+                    </CardContex.Provider>
+                ))}
+        </div>
 
         {isModalOpen &&
             <div>
@@ -144,10 +174,10 @@ export default function Flashcards() {
                 {/* { isOpen, onClose, onSubmit, onDelete, initialData = null } */}
                 <FlashcardModal
                     isOpen={isModalOpen}
-                    onClose={() => { setIsModalOpen(false); setEditingCard(null) }}
                     initialData={editingCard}
                     onSubmit={handleSaveCard}
-                    onDelete={handleDeleteCard} />
+                    onDelete={handleDeleteCard}
+                    onClose={() => { setIsModalOpen(false); setEditingCard(null) }} />
             </div>}
     </div>
     );

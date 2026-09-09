@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Literal
 
 class FlashcardBase(BaseModel):
     front: str
@@ -17,9 +17,11 @@ class FlashcardUpdate(FlashcardBase):
 class FlashcardRead(FlashcardBase):
     id:int
     subject_id: int
-    points: int
-    repetitions: int
+    level: int
     is_reviewed: bool
     next_review_date: Optional[datetime] = None
 
     model_config = ConfigDict(from_attributes=True)
+
+class FlashcardReview(BaseModel):
+    result: Literal["acerto", "erro"]

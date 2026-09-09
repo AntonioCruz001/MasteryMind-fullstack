@@ -19,7 +19,7 @@ export default function HomeLayout() {
                 <button className="text-white text-xl">☰</button>
                 <span className="text-white font-bold">Mastery Mind</span>
 
-                <Button onClick={handleLogout} title={'Sair'} btnType={'criar'} className="bg-teal-800"/>
+                <Button onClick={handleLogout} title={'Sair'} btnType={'criar'} className="bg-teal-700 hover:bg-teal-800"/>
 
                 <div className="w-8 h-8 rounded-full bg-gray-300 border border-white overflow-hidden">
                     <img src="" alt="Perfil" />

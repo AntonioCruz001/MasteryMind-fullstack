@@ -1,4 +1,3 @@
-// import { CardContex } from "../pages/Flashcards";
 import { useContext, useEffect, useState } from "react";
 import Button from "./Button";
 import FlashcardContent from "./FlashcardContent";
@@ -7,13 +6,18 @@ import { CardContex } from "../pages/Flashcards";
 
 export default function FlashcardItem() {
     const [fliped, setFliped] = useState(false);
-    const [card, func] = useContext(CardContex)
+    const [answered, setAnswered] = useState(false);
+    const [reviewIndicator, setReviewIndicator] = useState();
+    const [card, func] = useContext(CardContex);
     const setEdit = func.setEdit
     const setModal = func.setModal
+    const reviewCard = func.reviewCard
+    const responseCard = func.responseCard
 
     function handleFlipClick() {
         { fliped === false ? setFliped(true) : setFliped(false) }
     }
+
 
     return (
         // wrapper
@@ -21,7 +25,7 @@ export default function FlashcardItem() {
             {/* header */}
             <div className="flex flex-row  px-4">
                 {/* <ReviewControls cardPontos={pontos} /> */}
-                <ReviewControls />
+                <ReviewControls revIndicator={reviewIndicator} />
                 <Button className="w-6" title={'⚙'} onClick={() => { setEdit(card); setModal(true) }} />
             </div>
 
@@ -29,12 +33,22 @@ export default function FlashcardItem() {
             <FlashcardContent fliped={fliped} handleClick={handleFlipClick} />
 
             {/* Botoes */}
-            <div>
+            <div >
                 {fliped ?
-                    <div className="flex flex-row justify-center gap-20 px-16">
-                        <Button title={'Errei'} className="" />
-                        <Button title={'Acertei'} className="" />
-                    </div> : ''}
+                    <div className="flex flex-row justify-center gap-8 h-5">
+                        <Button
+                            title={'Errei'}
+                            btnType={'erro'}
+                            className="text-xs py-0 px-3 h-5 leading-none flex items-center justify-center"
+                            onClick={() => reviewCard(card.id, 'erro')} />
+                        <Button
+                            title={'Acertei'}
+                            btnType={'acerto'}
+                            className="text-xs py-0 px-3 h-5 leading-none flex items-center justify-center"
+                            onClick={() => reviewCard(card.id, 'acerto')} />
+                    </div> : <div className="h-5">
+                        
+                    </div>}
             </div>
         </div>
     )

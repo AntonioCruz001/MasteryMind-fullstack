@@ -26,8 +26,8 @@ def delete_flashcard(db: Session, flashcard_id: int) -> bool:
         return True
     return False
 
-def review_flashcard(db: Session, flascard_id: int, result: str) -> Flashcard:
-    db_flashcard = db.query(Flashcard).filter(Flashcard.id == flascard_id).first()
+def review_flashcard(db: Session, flashcard_id: int, result: str) -> Flashcard:
+    db_flashcard = db.query(Flashcard).filter(Flashcard.id == flashcard_id).first()
     if not db_flashcard:
         return None
 
@@ -35,30 +35,28 @@ def review_flashcard(db: Session, flascard_id: int, result: str) -> Flashcard:
     db_flashcard.is_reviewed = True
 
     if result == "acerto":
-        db_flashcard.points +=1
-        db_flashcard.repetitions = min(4, db_flashcard.repetitions + 1) # min(a,b) retorna o menor dos itens - neste caso, menor que 4 ou 4
+        db_flashcard.level = min(4, db_flashcard.level + 1) # min(a,b) retorna o menor dos itens - neste caso, menor que 4 ou 4
 
-        if db_flashcard.repetitions == 1:
+        if db_flashcard.level == 1:
             db_flashcard.next_review_date = now + timedelta(days=1)
-        elif db_flashcard.repetitions == 2:
+        elif db_flashcard.level == 2:
             db_flashcard.next_review_date = now + timedelta(days=7)
-        elif db_flashcard.repetitions == 3:
+        elif db_flashcard.level == 3:
             db_flashcard.next_review_date = now + timedelta(days=15)
         else:
             db_flashcard.next_review_date = None
 
     elif result == 'erro':
-        db_flashcard.points = max(0, db_flashcard.points - 1) # max(a,b) retorna o maior dos itens - neste caso, maior que 0 ou 0
+        db_flashcard.level = max(0, db_flashcard.level - 1) # max(a,b) retorna o maior dos itens - neste caso, maior que 0 ou 0
 
-        if db_flashcard.repetitions >= 3:
-            db_flashcard.repetitions = 2
+
+        if db_flashcard.level >= 3:
+            db_flashcard.level = 2
             db_flashcard.next_review_date = now + timedelta(days=7)
-        elif db_flashcard.repetitions == 2:
-            db_flashcard.repetitions = 1
+        elif db_flashcard.level == 1:
             db_flashcard.next_review_date = now + timedelta(days=1)
         else:
-            db_flashcard.repetitions = 0
-            db_flashcard.points = 0
+            db_flashcard.level = 0
             db_flashcard.next_review_date = now + timedelta(days=1)
 
 

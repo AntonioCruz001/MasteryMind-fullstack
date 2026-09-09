@@ -11,8 +11,7 @@ class Flashcard(Base):
     back: Mapped[str] = mapped_column(Text, nullable=False)
     subject_id: Mapped[int] = mapped_column(ForeignKey("subjects.id", ondelete="CASCADE"), nullable=False)
 
-    points: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
-    repetitions: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    level: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     is_reviewed: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     # is_used_today: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     next_review_date: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
