@@ -5,6 +5,6 @@ export default function Review() {
         // <Fragment>
         //     <h1>Revisão</h1>
         // </Fragment>
-        <h1>Revisão</h1>
+        <h1>Revisão (Em breve)</h1>
     )
 }

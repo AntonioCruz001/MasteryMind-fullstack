@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app import crud, models
 from app.database import get_db
 from app.core.deps import get_current_user
-from app.schemas.flashcard import FlashcardCreate, FlashcardRead, FlashcardUpdate
+from app.schemas.flashcard import FlashcardCreate, FlashcardRead, FlashcardUpdate, FlashcardReview
 
 router = APIRouter(
     prefix="/subjects/{subject_id}/flashcards",
@@ -62,7 +62,7 @@ def delete_flashcard(
 def review_flashcard_route(
     subject_id: int,
     flashcard_id: int,
-    data: dict,
+    data: FlashcardReview,
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user)
 ):
@@ -70,11 +70,12 @@ def review_flashcard_route(
     if not subject:
         raise HTTPException(status_code=404, detail="Assunto não encontrado.")
 
-    result = data.get("result")
-    if result not in ["acerto","erro"]:
-        raise HTTPException(status_code=400, detail="Resultado inválido. Use 'acerto' ou 'erro'.")
+    result = data.result
+    firstMistake = data.firstMistake
+    # if result not in ["acerto","erro"]:
+    #     raise HTTPException(status_code=400, detail="Resultado inválido. Use 'acerto' ou 'erro'.")
 
-    updated_card = crud.review_flashcard(db=db, flashcard_id = flashcard_id, result = result)
+    updated_card = crud.review_flashcard(db=db, flashcard_id = flashcard_id, result = result, firstMistake = firstMistake)
     if not updated_card:
         raise HTTPException(status_code=404, detail="Flashcard não encontrado.")
 

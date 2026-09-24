@@ -1,10 +1,62 @@
 @import "tailwindcss";
 
 @theme {
-  /* Configuração das cores frias do MasteryMind no Tailwind v4 */
+  /* Fundo e Containers */
   --color-brandBg: #ebf8fa;
   --color-brandCard: #ffffff;
+  --color-brandBorder: #e2e8f0;
+
+  /* Cor Primária & Variações */
   --color-brandPrimary: #319795;
+  --color-brandPrimaryHover: #287e7c;
+  --color-brandPrimaryLight: #e6fffa;
+
+  /* Cor de Destaque / Accent */
   --color-brandAccent: #00b5d8;
+  --color-brandAccentHover: #009cb8;
+
+  /* Estrutura de Navegação / Header */
+  --color-brandHeaderBg: #008099;
+  --color-brandHeaderHover: #00a2c3;
+
+  /* Links de Navegação (Abas e Menus) */
+  --color-brandNavBg: #368695;
+
+  --color-brandNavHoverBg: #1fb3b0;
+  --color-brandNavActiveBg:#22c2bf;
+
+  --color-brandNavActiveText: #ffffff;
+  --color-brandNavInactiveText: #d5dae2;
+  --color-brandNavHoverText: #ffffff;
+  --color-brandNavBorder: #1f6c6b;
+
+  /* Tipografia */
   --color-brandText: #2d3748;
+  --color-brandTextMuted: #718096;
+
+  /* Estados e Feedback */
+  --color-brandSuccess: #38a169;
+  --color-brandDanger: #e53e3e;
+  --color-brandWarning: #dd6b20;
+}
+
+body {
+  @apply select-none;
+}
+
+/* Libera a seleção em campos de entrada, formulários e editores */
+input, 
+textarea, 
+select, 
+[contenteditable="true"] {
+  user-select: text;
+}
+
+/* Libera a seleção em blocos de código, citações e áreas legíveis */
+code, 
+pre, 
+blockquote, 
+.selectable-text,
+.prose {
+  user-select: text;
 }

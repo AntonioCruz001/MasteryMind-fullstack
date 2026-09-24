@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
-import Button from '../../components/Button';
+import Button from '../../components/ui/Button'
 
 function Subjects() {
     const [subjects, setSubjects] = useState([])
@@ -58,7 +58,8 @@ function Subjects() {
                 <Button
                     onClick={() => setIsModalOpen(true)}
                     title={"+ Nova Categoria"}
-                    className="bg-brandPrimary hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition-all text-sm cursor-pointer"
+                    btnType={'criar'}
+                    // className="bg-brandPrimary hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition-all text-sm cursor-pointer"
                 />
             </div>
 

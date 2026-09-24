@@ -1,6 +1,6 @@
 import React from "react";
 import { Fragment } from "react";
-import Button from "./Button";
+import Button from "../ui/Button";
 
 import './Header.css'
 
