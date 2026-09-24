@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import Button from '../../components/Button'
+import Button from '../../components/ui/Button'
 import api from '../../services/api'
+import backIcon from '../../assets/navigation/back.svg'
 
 export default function Cadastro() {
     const [nome, setNome] = useState('');
@@ -67,10 +68,14 @@ export default function Cadastro() {
 
                 <Link
                     to="/"
-                    className="flex items-center gap-1.5 text-xs font-semibold 
-                    tracking-wide text-gray-400 hover:text-brandPrimary transition-colors self-start"
-                >
-                    ← Voltar para o início
+                    className='flex items-center self-start
+                              gap-2 px-4 sm:px-2 py-1 tracking-wide
+                              bg-brandCard border border-brandBorder shadow-xs rounded-xl 
+                              text-brandText fontmedium text-xs
+                              hover:bg-[#d4dddf] hover:text-brandPrimary active:scale-95 transition-all shrink-0 select-none
+                              '>
+                    <img className='w-4 h-4 object-contain pointer-events-none' src={backIcon} alt="back" />
+                    Voltar para o início
                 </Link>
 
                 <div className='w-full bg-brandCard p-6 rounded-2xl shadow-md border border-gray-100'>

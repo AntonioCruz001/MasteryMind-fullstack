@@ -1,9 +1,10 @@
 import { useState, useEffect, createContext, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import FlashcardItem from '../../components/FlashcardItem';
-import FlashcardModal from '../../components/FlashcardModal';
-import Button from '../../components/Button';
+import FlashcardItem from '../../components/flashcards/FlashcardItem';
+import FlashcardModal from '../../components/flashcards/FlashcardModal';
+import Button from '../../components/ui/Button';
 import api from '../../services/api';
+import backIcon from '../../assets/navigation/back.svg';
 
 export const CardContex = createContext([]);
 
@@ -15,7 +16,14 @@ export default function Flashcards() {
     const [editingCard, setEditingCard] = useState(null)        // Card atual que está sendo editado ou apagado
     const [responseCard, setResponseCard] = useState()
     const [teste, setTeste] = useState('Teste de contexto!')
+    const [erroInicial, setErroInicial] = useState(false);
+    const [currentTime, setCurrentTime] = useState(new Date())
     console.log('responseCard', responseCard);
+
+    useEffect(() => {
+        const timer = setInterval(() => setCurrentTime(new Date()), 10000);
+        return () => clearInterval(timer);
+    }, [])
 
     // api.get - Busca dos Cards na API 
     useEffect(() => {
@@ -26,7 +34,7 @@ export default function Flashcards() {
 
                 const initialReviewedState = {};
                 cards.forEach(card => {
-                    if (card.is_reviwed) {
+                    if (card.is_reviewed) {
                         initialReviewedState[card.id] = true;
                     }
                 });
@@ -44,12 +52,17 @@ export default function Flashcards() {
     // useMemo para manter o resultado do sort e não ter que refazer a cada render
     const sortedFlashcards = useMemo(() => {
         return [...flashcardsArray].sort((a, b) => {
-            const aReviewed = reviewedCards[a.id] ? 1 : 0;
-            const bReviewed = reviewedCards[b.id] ? 1 : 0;
 
-            return aReviewed - bReviewed; // Não revisados (0) primeiro, revisados (1) ao final
+            // Um card está disponível se não tem data de revisão, se a data já passou
+            const aAvailable = (!a.next_review_date || new Date(a.next_review_date) <= currentTime);
+            const bAvailable = (!b.next_review_date || new Date(b.next_review_date) <= currentTime);
+
+            const aVal = aAvailable ? 0 : 1; // 0 para o topo, 1 para o final
+            const bVal = bAvailable ? 0 : 1;
+
+            return aVal - bVal;
         });
-    }, [flashcardsArray, reviewedCards]);
+    }, [flashcardsArray, reviewedCards, currentTime]);
 
     // api.put (update) e api.post (create) 
     const handleSaveCard = async (cardData) => {
@@ -111,9 +124,19 @@ export default function Flashcards() {
 
     const handleReview = async (cardId, resultado) => {
         if (!cardId) return;
+
+        const isFirstMistake = reviewedCards[cardId] === undefined && resultado === 'erro';
+        console.log('isFirstMistake: ', isFirstMistake);
+
+        if (isFirstMistake) {
+            setErroInicial(true);
+        } else if (!isFirstMistake && erroInicial) {
+            setErroInicial(false);
+        }
+
         try {
             const response = await api.post(`/subjects/${subjectId}/flashcards/${cardId}/review`,
-                { result: resultado }
+                { result: resultado, firstMistake: isFirstMistake }
             )
             const cardUpdated = response.data;
 
@@ -121,15 +144,18 @@ export default function Flashcards() {
                 prev.map((card) => card.id === cardId ? cardUpdated : card)
             ))
 
-            setReviewedCards((prev) => ({ ...prev, [cardId]: true }))
+            // Criar condição para não permitir no primeiro erro.
+            if (!isFirstMistake) {
+                setReviewedCards((prev) => ({ ...prev, [cardId]: true }))
+            }
 
-            console.log('Revisado: ', cardUpdated);
+            console.log('Card atualizado: ', cardUpdated);
         } catch (error) {
             console.log('Erro ao revisar o card: ', error);
         }
     }
 
-    console.log('reviewedCards', reviewedCards);
+    console.log('reviewedCards', reviewedCards, 'erroInicial? :', erroInicial);
 
 
     const ctx = {
@@ -139,7 +165,8 @@ export default function Flashcards() {
         setEdit: setEditingCard,
         reviewCard: handleReview,
         responseCardObj: responseCard,
-        testeContext: teste
+        testeContext: teste,
+        currentTime: currentTime
     }
 
     console.log('editingCard: ', editingCard);
@@ -147,8 +174,19 @@ export default function Flashcards() {
     return (<div>
         {/* CABEÇALHO */}
 
-        <div className='flex justify-between items-center mb-4'>
-            <Link to={'/home/subjects'}>← Voltar</Link>
+        <div className='flex justify-between items-center mb-4 gap-3 w-full'>
+
+            <Link
+                to={'/home/subjects'}
+                className='flex items-center justify-center
+              gap-2 px-8 sm:px-4 py-2.5 
+              bg-brandCard border border-brandBorder shadow-xs rounded-xl 
+              text-brandText fontmedium text-sm
+              hover:bg-[#d4dddf] active:scale-95 transition-all shrink-0 select-none
+              '>
+                <img className='w-6 h-6 object-contain pointer-events-none' src={backIcon} alt="back" />
+            </Link>
+
             <Button onClick={() =>
                 setIsModalOpen(true)}
                 title={"+ Novo Flashcard"}

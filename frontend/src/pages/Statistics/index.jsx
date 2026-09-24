@@ -2,6 +2,6 @@
 
 export default function Statistics() {
     return (
-        <h1>Estatísticas</h1>
+        <h1>Estatísticas (Em breve)</h1>
     )     
 }

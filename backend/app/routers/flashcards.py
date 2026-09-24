@@ -71,10 +71,11 @@ def review_flashcard_route(
         raise HTTPException(status_code=404, detail="Assunto não encontrado.")
 
     result = data.result
+    firstMistake = data.firstMistake
     # if result not in ["acerto","erro"]:
     #     raise HTTPException(status_code=400, detail="Resultado inválido. Use 'acerto' ou 'erro'.")
 
-    updated_card = crud.review_flashcard(db=db, flashcard_id = flashcard_id, result = result)
+    updated_card = crud.review_flashcard(db=db, flashcard_id = flashcard_id, result = result, firstMistake = firstMistake)
     if not updated_card:
         raise HTTPException(status_code=404, detail="Flashcard não encontrado.")
 

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useContext } from "react"
-import { CardContex } from "../pages/Flashcards"
+import { CardContex } from "../../pages/Flashcards"
 
 
 export default function FlashcardContent({ fliped, handleClick, ...props }) {
@@ -9,24 +9,27 @@ export default function FlashcardContent({ fliped, handleClick, ...props }) {
     // Recebendo o card atual do sortedFlashcards.map do Flashcards
     const card = useContext(CardContex)
 
-    console.log("Card ID:", card[0].id, "Next Review:", card[0].next_review_date, "Level:", card[0].level);
+    const currentTime = card[1]?.currentTime || new Date();
+
+    console.log("Card ID:", card[0].id, "Next Review:", card[0].next_review_date, "Level:", card[0].level, "is_reviewed", card[0].is_reviewed);
 
     const cardParaRevisar = (card) => {
         if (!card.next_review_date) return true; // Novo card livre para estudo
 
         const reviewDate = new Date(card.next_review_date);
-        const now = new Date();
+        // const now = new Date();
 
         // Zera as horas para comparar apenas o dia (YYYY-MM-DD)
-        reviewDate.setHours(0, 0, 0, 0);
-        now.setHours(0, 0, 0, 0);
+        // reviewDate.setHours(0, 0, 0, 0);
+        // now.setHours(0, 0, 0, 0);
 
-        return reviewDate <= now;
+        return reviewDate <= currentTime;
     }
 
     // Bloquear Cards Após Revisar
     const available = cardParaRevisar(card[0]);
-
+    console.log('available', available);
+    
     // Liberar cards para testes
     // const available = true;
 
