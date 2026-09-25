@@ -21,7 +21,7 @@ export default function Flashcards() {
     console.log('responseCard', responseCard);
 
     useEffect(() => {
-        const timer = setInterval(() => setCurrentTime(new Date()), 10000);
+        const timer = setInterval(() => setCurrentTime(new Date()), 5000);// mudei de 10000 para 5000
         return () => clearInterval(timer);
     }, [])
 

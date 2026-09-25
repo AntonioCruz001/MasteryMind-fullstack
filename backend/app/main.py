@@ -21,7 +21,7 @@ origins = [
     "http://127.0.0.1:3000",      # IP correspondente ao localhost
     "http://localhost:5173",      # Endereço padrão do Vite (Vue / React moderno)
     "http://127.0.0.1:5173",
-    # "https://seu-frontend.vercel.app",  # Ambiente de produção    
+    "https://mastery-mind-fullstack.vercel.app",  # Ambiente de produção    
 ]
 
 
