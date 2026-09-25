@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { CardContex } from "../../pages/Flashcards";
-import ReviewCountdown from "./ReviewCountdown";
+import ReviewCountdown from "./ReviewCountDown";
 
 // 1. Constantes e utilitários fora do componente (evita recriação a cada render)
 const STATUS_COLORS = [
