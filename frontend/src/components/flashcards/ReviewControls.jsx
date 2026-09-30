@@ -24,36 +24,52 @@ export default function ReviewControls({ setWaiting5 }) {
 
   const currentTime = cardContext?.[1]?.currentTime || new Date();
 
+  const parseTargetDate = (dateStr) => {
+    if (!dateStr) return null;
+    const formattedStr = typeof dateStr === 'string' && !dateStr.endsWith('Z') && !dateStr.includes('+')
+      ? `${dateStr}Z` : dateStr;
+    return new Date(formattedStr)
+  }
+
+  const nextReviewDateObj = parseTargetDate(card?.next_review_date);
+
   const isWaiting5 =
-    card?.level === 0 && !card?.is_reviewed && card?.next_review_date && new Date(card.next_review_date) > currentTime;
+    card?.level === 0 &&
+    card.status === "LEARNING" &&
+    nextReviewDateObj &&
+    nextReviewDateObj > currentTime;
 
   // IFs para determinar o texto de revisão
   const getReviewText = () => {
     if (!card) return "Sem dados";
+
+    // Se for level 4
     if (card.next_review_date === null && card.level >= 4) return "Memorizado!";
-    if (card.level === 0 && !card.is_reviewed) {
-      // Se tiver next_review_date, foi um erro de primeira. Se for null, é um card novo.
+    
+    // Se for erro novo ou erro inicial
+    if (card.level === 0) {
+      if (card.status === "NEW"){
+        return "Novo Card";
+      }
       if (isWaiting5) {
-        return <ReviewCountdown targetDate={card.next_review_date} defaultMinutes={5} />;
+        return <ReviewCountdown targetDate={card.next_review_date} defaultMinutes={5}/>
       }
-      if (card.next_review_date === null && card.level === 0 && !card.is_reviewed){
-        return "Novo Card"
-      }
-      return "";
     }
 
-    if(card.next_review_date){
-      const reviewDate = new Date(card.next_review_date)
+    // Se a revisão for hoje
+    if (card.next_review_date) {
+      const reviewDate = nextReviewDateObj;
       const today = new Date();
 
-      const isToday = 
+      const isToday =
         reviewDate.getDate() === today.getDate() &&
         reviewDate.getMonth() === today.getMonth() &&
         reviewDate.getFullYear() === today.getFullYear();
 
-        if (isToday) {return 'Revisão: Hoje';}
+      if (isToday) { return 'Revisão: Hoje'; }
     }
 
+    // Se a revisão for futura
     const formattedDate = formatDate(card.next_review_date);
     return formattedDate ? `Acerto! Revisão: ${formattedDate}` : "Sem data";
   };

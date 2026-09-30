@@ -1,7 +1,8 @@
 from datetime import datetime
-from sqlalchemy import String,Integer, ForeignKey, Text, Boolean, DateTime
+from sqlalchemy import String,Integer, ForeignKey, Text, Boolean, DateTime, Enum as SQLEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database import Base
+from app.enums.flashcards import FlashcardStatus
 from app.models.tags import flashcard_tags
 
 class Flashcard(Base):
@@ -13,11 +14,15 @@ class Flashcard(Base):
     subject_id: Mapped[int] = mapped_column(ForeignKey("subjects.id", ondelete="CASCADE"), nullable=False)
 
     level: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
-    is_reviewed: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+
+    # is_new: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    
     next_review_date: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
     last_reviewed_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
 
     last_result:     Mapped[str | None] =mapped_column(String(20), nullable=True)
+
+    status:Mapped[FlashcardStatus] = mapped_column(SQLEnum(FlashcardStatus, native_enum=False), default=FlashcardStatus.NEW, nullable=False)
 
     subject = relationship("Subject", back_populates="flashcards")
     tags = relationship("Tag", secondary="flashcard_tags", back_populates="flashcards")

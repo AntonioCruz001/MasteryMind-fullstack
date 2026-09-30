@@ -1,8 +1,9 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from sqlalchemy.orm import Session
 from app.models.flashcard import Flashcard
 from app.models.tags import Tag
 from app.schemas.flashcard  import FlashcardCreate, FlashcardUpdate
+from app.enums.flashcards import FlashcardStatus
 from typing import List
 
 def create_flashcard(db: Session, flashcard: FlashcardCreate , subject_id: int) -> Flashcard:
@@ -27,53 +28,61 @@ def delete_flashcard(db: Session, flashcard_id: int) -> bool:
         return True
     return False
 
-def review_flashcard(db: Session, flashcard_id: int, result: str, firstMistake: bool) -> Flashcard:
+def review_flashcard(db: Session, flashcard_id: int, result: str) -> Flashcard:
     db_flashcard = db.query(Flashcard).filter(Flashcard.id == flashcard_id).first()
     if not db_flashcard:
         return None
 
-    now = datetime.now()
-
+    now = datetime.now(timezone.utc)
     db_flashcard.last_result = result
+    current_level = db_flashcard.level
+    current_status = db_flashcard.status
+    db_flashcard.last_reviewed_at = now
 
-    # Criar condição para is_reviewed não permitir no primeiro erro.
-    if not firstMistake:
-        db_flashcard.is_reviewed = True
-        db_flashcard.last_reviewed_at = now
-
-    # lastLevel = db_flashcard.level
 
     if result == "acerto":
-        db_flashcard.level = min(4, db_flashcard.level + 1) # min(a,b) retorna o menor dos itens - neste caso, menor que 4 ou 4
-
+        # min(a,b) retorna o menor dos itens - neste caso, menor que 4 ou 4
+        new_level = min(4, db_flashcard.level + 1) 
+        db_flashcard.level = new_level
         
-        if db_flashcard.level == 1:
-            db_flashcard.next_review_date = now + timedelta(days=1)
-        elif db_flashcard.level == 2:
-            db_flashcard.next_review_date = now + timedelta(days=7)
-        elif db_flashcard.level == 3:
-            db_flashcard.next_review_date = now + timedelta(days=15)
-        elif db_flashcard.level >= 4:
+        if new_level == 4:
+            db_flashcard.status = FlashcardStatus.MASTERED
             db_flashcard.next_review_date = None
         else:
-            db_flashcard.next_review_date = None
+            db_flashcard.status = FlashcardStatus.REVIEW
 
-    elif result == 'erro':
-        db_flashcard.level = max(0, db_flashcard.level - 1) # max(a,b) retorna o maior dos itens - neste caso, maior que 0 ou 0
+            if new_level == 1:
+                db_flashcard.next_review_date = now + timedelta(days=1)
+            elif new_level == 2:
+                db_flashcard.next_review_date = now + timedelta(days=7)
+            elif new_level == 3:
+                db_flashcard.next_review_date = now + timedelta(days=15)
 
-        
-        if  db_flashcard.level >= 3:
-            db_flashcard.level = 2
-            db_flashcard.next_review_date = now + timedelta(days=7)
-        elif db_flashcard.level == 1:
-            db_flashcard.next_review_date = now + timedelta(days=1)
-        else:
-            db_flashcard.level = 0
-            if firstMistake:
-                db_flashcard.next_review_date = now + timedelta(minutes=5)
-            else:
+    elif result == "erro":
+            # 1. Fluxo de Cards Novos ou em Aprendizado Inicial (Level 0)
+            if current_status == FlashcardStatus.NEW or (current_status == FlashcardStatus.LEARNING and current_level == 0):
+                db_flashcard.status = FlashcardStatus.LEARNING
+                db_flashcard.level = 0
                 db_flashcard.next_review_date = now + timedelta(minutes=5)
 
+            # 2. Fluxo Explícito de Cards Graduados / Em Retenção
+            elif current_status in [FlashcardStatus.REVIEW, FlashcardStatus.MASTERED, FlashcardStatus.REOPENED, FlashcardStatus.RELEARNING]:
+                db_flashcard.status = FlashcardStatus.RELEARNING
+
+                # Levels 3 e 4 caem para Level 2 (7 dias)
+                if current_level in [3, 4]:
+                    db_flashcard.level = 2
+                    db_flashcard.next_review_date = now + timedelta(days=7)
+
+                # Level 2 cai para Level 1 (1 dia)
+                elif current_level == 2:
+                    db_flashcard.level = 1
+                    db_flashcard.next_review_date = now + timedelta(days=1)
+
+                # Level 1 ou Level 0 caem/permanecem no Level 0 (5 min)
+                else:
+                    db_flashcard.level = 0
+                    db_flashcard.next_review_date = now + timedelta(minutes=5)
 
     db.commit()
     db.refresh(db_flashcard)
