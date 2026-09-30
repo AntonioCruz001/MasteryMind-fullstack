@@ -5,31 +5,26 @@ import { CardContex } from "../../pages/Flashcards"
 
 export default function FlashcardContent({ fliped, handleClick, ...props }) {
 
-
     // Recebendo o card atual do sortedFlashcards.map do Flashcards
-    const card = useContext(CardContex)
+    const cardContext = useContext(CardContex);
+    const card = cardContext[0];
+    const currentTime = cardContext[1]?.currentTime || new Date();
 
-    const currentTime = card[1]?.currentTime || new Date();
+    console.log("Card ID:", card.id, "Next Review:", card.next_review_date, "Level:", card.level, "is_reviewed", card.is_reviewed);
 
-    console.log("Card ID:", card[0].id, "Next Review:", card[0].next_review_date, "Level:", card[0].level, "is_reviewed", card[0].is_reviewed);
+    const cardParaRevisar = (cardData) => {
+        if (cardData.status === "NEW") return true; // Novo cardData livre para estudo
+        if (!cardData.next_review_date) return true;
 
-    const cardParaRevisar = (card) => {
-        if (!card.next_review_date) return true; // Novo card livre para estudo
+        const dateStr = typeof cardData.next_review_date === 'string' && !cardData.next_review_date.endsWith('Z') && !cardData.next_review_date.includes('+') ? `${cardData.next_review_date}Z` :
+            cardData.next_review_date;
 
-        const reviewDate = new Date(card.next_review_date);
-        // const now = new Date();
-
-        // Zera as horas para comparar apenas o dia (YYYY-MM-DD)
-        // reviewDate.setHours(0, 0, 0, 0);
-        // now.setHours(0, 0, 0, 0);
-
-        return reviewDate <= currentTime;
+        return new Date(dateStr) <= currentTime;
     }
 
     // Bloquear Cards Após Revisar
-    const available = cardParaRevisar(card[0]);
-    console.log('available', available);
-    
+    const available = cardParaRevisar(card);
+
     // Liberar cards para testes
     // const available = true;
 
@@ -53,12 +48,12 @@ export default function FlashcardContent({ fliped, handleClick, ...props }) {
         )}
 
         {!fliped ? <div className="text-center">
-            {card[0].front}
+            {card.front}
             {console.log('exibindo front')}
 
         </div> :
             <div className="text-center">
-                {card[0].back}
+                {card.back}
                 {console.log('exibindo back')}
             </div>
         }
