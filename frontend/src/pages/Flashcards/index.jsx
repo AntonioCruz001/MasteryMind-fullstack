@@ -11,17 +11,20 @@ export const CardContex = createContext([]);
 export default function Flashcards() {
     const { subjectId } = useParams()                           // Recebe o subjectId da URL
     const [flashcardsArray, setFlashcardsArray] = useState([]); // Contem o array dos flashcards
-    const [reviewedCards, setReviewedCards] = useState({});     // Array apenas com os cards revisados
     const [isModalOpen, setIsModalOpen] = useState(false)       // Controle de abrir o modal
     const [editingCard, setEditingCard] = useState(null)        // Card atual que está sendo editado ou apagado
-    const [responseCard, setResponseCard] = useState()
-    const [teste, setTeste] = useState('Teste de contexto!')
-    const [erroInicial, setErroInicial] = useState(false);
     const [currentTime, setCurrentTime] = useState(new Date())
-    console.log('responseCard', responseCard);
+
+    //const [teste, setTeste] = useState('Teste de contexto!')
+    // const [responseCard, setResponseCard] = useState()
+    // const [erroInicial, setErroInicial] = useState(false);
+    // Array apenas com os cards revisados
+    // const [reviewedCards, setReviewedCards] = useState({});     
+
 
     useEffect(() => {
-        const timer = setInterval(() => setCurrentTime(new Date()), 5000);// mudei de 10000 para 5000
+        // mudei de 10000 para 5000
+        const timer = setInterval(() => setCurrentTime(new Date()), 5000);
         return () => clearInterval(timer);
     }, [])
 
@@ -32,14 +35,14 @@ export default function Flashcards() {
                 const response = await api.get(`/subjects/${subjectId}/flashcards`);
                 const cards = response.data;
 
-                const initialReviewedState = {};
-                cards.forEach(card => {
-                    if (card.is_reviewed) {
-                        initialReviewedState[card.id] = true;
-                    }
-                });
+                // const initialReviewedState = {};
+                // cards.forEach(card => {
+                //     if (card.is_reviewed) {
+                //         initialReviewedState[card.id] = true;
+                //     }
+                // });
 
-                setReviewedCards(initialReviewedState);
+                // setReviewedCards(initialReviewedState);
                 setFlashcardsArray(cards);
             } catch (err) {
                 console.log('Erro ao buscar flashcards:', err);
@@ -53,16 +56,19 @@ export default function Flashcards() {
     const sortedFlashcards = useMemo(() => {
         return [...flashcardsArray].sort((a, b) => {
 
-            // Um card está disponível se não tem data de revisão, se a data já passou
-            const aAvailable = (!a.next_review_date || new Date(a.next_review_date) <= currentTime);
-            const bAvailable = (!b.next_review_date || new Date(b.next_review_date) <= currentTime);
+            const isAvailable = (card) => {
+                if (card.status === 'MASTERED') return false;
+                if (!card.next_review_date) return true;
+                return new Date(card.next_review_date) <= currentTime;
+            };
 
-            const aVal = aAvailable ? 0 : 1; // 0 para o topo, 1 para o final
-            const bVal = bAvailable ? 0 : 1;
+            const aAvailable = isAvailable(a);
+            const bAvailable = isAvailable(b);
 
-            return aVal - bVal;
+            if (aAvailable === bAvailable) return 0;
+            return aAvailable ? -1 : 1;
         });
-    }, [flashcardsArray, reviewedCards, currentTime]);
+    }, [flashcardsArray, currentTime]);
 
     // api.put (update) e api.post (create) 
     const handleSaveCard = async (cardData) => {
@@ -78,7 +84,6 @@ export default function Flashcards() {
                     prev.map((card) => (card.id === editingCard.id ? response.data : card))
                 ));
 
-                console.log('Atualizado com sucesso', 'response.data: ', response.data, 'response: ', response);
 
             } else {
                 // Cria novo card
@@ -89,7 +94,6 @@ export default function Flashcards() {
 
                 setFlashcardsArray(prevCards => [...prevCards, response.data]);
 
-                console.log('Salvo com sucesso', 'response.data: ', response.data, 'response: ', response);
             }
 
             setIsModalOpen(false);
@@ -115,8 +119,6 @@ export default function Flashcards() {
             setIsModalOpen(false);
             setEditingCard(null);
 
-            console.log('Excluído com sucesso', 'response.data : ', response.data, 'response:  ', response, 'FlashcardsArray: ', flashcardsArray);
-
         } catch (err) {
             console.error('Erro ao salvar o flashcard:', err);
         }
@@ -125,18 +127,16 @@ export default function Flashcards() {
     const handleReview = async (cardId, resultado) => {
         if (!cardId) return;
 
-        const isFirstMistake = reviewedCards[cardId] === undefined && resultado === 'erro';
-        console.log('isFirstMistake: ', isFirstMistake);
-
-        if (isFirstMistake) {
-            setErroInicial(true);
-        } else if (!isFirstMistake && erroInicial) {
-            setErroInicial(false);
-        }
+        // const isFirstMistake = reviewedCards[cardId] === undefined && resultado === 'erro';
+        // if (isFirstMistake) {
+        //     setErroInicial(true);
+        // } else if (!isFirstMistake && erroInicial) {
+        //     setErroInicial(false);
+        // }
 
         try {
             const response = await api.post(`/subjects/${subjectId}/flashcards/${cardId}/review`,
-                { result: resultado, firstMistake: isFirstMistake }
+                { result: resultado }
             )
             const cardUpdated = response.data;
 
@@ -144,32 +144,19 @@ export default function Flashcards() {
                 prev.map((card) => card.id === cardId ? cardUpdated : card)
             ))
 
-            // Criar condição para não permitir no primeiro erro.
-            if (!isFirstMistake) {
-                setReviewedCards((prev) => ({ ...prev, [cardId]: true }))
-            }
-
-            console.log('Card atualizado: ', cardUpdated);
         } catch (error) {
             console.log('Erro ao revisar o card: ', error);
         }
     }
 
-    console.log('reviewedCards', reviewedCards, 'erroInicial? :', erroInicial);
-
-
     const ctx = {
         subjectId: subjectId,
         setModal: setIsModalOpen,
-        setReview: setReviewedCards,
         setEdit: setEditingCard,
         reviewCard: handleReview,
-        responseCardObj: responseCard,
-        testeContext: teste,
         currentTime: currentTime
     }
 
-    console.log('editingCard: ', editingCard);
 
     return (<div>
         {/* CABEÇALHO */}

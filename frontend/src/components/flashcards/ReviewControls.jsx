@@ -24,6 +24,9 @@ export default function ReviewControls({ setWaiting5 }) {
 
   const currentTime = cardContext?.[1]?.currentTime || new Date();
 
+
+  
+
   const isWaiting5 =
     card?.level === 0 && !card?.is_reviewed && card?.next_review_date && new Date(card.next_review_date) > currentTime;
 
