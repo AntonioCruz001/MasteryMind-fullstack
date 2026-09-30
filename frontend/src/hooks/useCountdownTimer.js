@@ -3,9 +3,16 @@ import { useState, useEffect } from 'react';
 export function useCountdownTimer(targetDate = null, defaultMinutes = 5, onComplete = () => { }) {
     const calculateSecondsleft = () => {
         if (targetDate) {
-            const diffInSeconds = Math.floor((new Date(targetDate).getTime() - new Date().getTime()) / 1000)
-            return diffInSeconds > 0 ? diffInSeconds : 0
+            const dateStr = typeof targetDate === 'string' && !targetDate.endsWith('Z') && !targetDate.includes('+')
+                ? `${targetDate}Z` : targetDate
+
+            const targetTime = new Date(dateStr).getTime()
+            const currentTime = new Date().getTime()
+            const diffInSeconds = Math.floor((targetTime - currentTime) / 1000);
+
+            return diffInSeconds > 0 ? diffInSeconds : 0;
         }
+
         return defaultMinutes * 60
     }
 
