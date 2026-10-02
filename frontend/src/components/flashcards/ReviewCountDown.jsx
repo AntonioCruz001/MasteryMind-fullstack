@@ -5,7 +5,6 @@ export default function ReviewCountDown({ targetDate, defaultMinutes = 5, onRead
 
     if (isFinished) {
         return (
-            // Depois deixar vazio
             <span className="text-brandPrimary font-semibold animate-pulse">
                 Pronto para revisar!
             </span>

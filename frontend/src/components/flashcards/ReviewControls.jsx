@@ -66,7 +66,7 @@ export default function ReviewControls({ setWaiting5 }) {
         reviewDate.getMonth() === today.getMonth() &&
         reviewDate.getFullYear() === today.getFullYear();
 
-      if (isToday) { return 'Revisão: Hoje'; }
+      if (isToday) { return <ReviewCountdown targetDate={card.next_review_date} defaultMinutes={5}/>; }
     }
 
     // Se a revisão for futura

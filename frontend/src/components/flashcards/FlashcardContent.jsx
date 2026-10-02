@@ -10,7 +10,7 @@ export default function FlashcardContent({ fliped, handleClick, ...props }) {
     const card = cardContext[0];
     const currentTime = cardContext[1]?.currentTime || new Date();
 
-    console.log("Card ID:", card.id, "Next Review:", card.next_review_date, "Level:", card.level, "is_reviewed", card.is_reviewed);
+    console.log("Card ID:", card.id, "Next Review:", card.next_review_date, "Level:", card.level,'card obj:', card);
 
     const cardParaRevisar = (cardData) => {
         if (cardData.status === "NEW") return true; // Novo cardData livre para estudo
@@ -49,12 +49,12 @@ export default function FlashcardContent({ fliped, handleClick, ...props }) {
 
         {!fliped ? <div className="text-center">
             {card.front}
-            {console.log('exibindo front')}
+            {/* {console.log('exibindo front')} */}
 
         </div> :
             <div className="text-center">
                 {card.back}
-                {console.log('exibindo back')}
+                {/* {console.log('exibindo back')} */}
             </div>
         }
     </div>

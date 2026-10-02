@@ -15,13 +15,6 @@ export default function Flashcards() {
     const [editingCard, setEditingCard] = useState(null)        // Card atual que está sendo editado ou apagado
     const [currentTime, setCurrentTime] = useState(new Date())
 
-    //const [teste, setTeste] = useState('Teste de contexto!')
-    // const [responseCard, setResponseCard] = useState()
-    // const [erroInicial, setErroInicial] = useState(false);
-    // Array apenas com os cards revisados
-    // const [reviewedCards, setReviewedCards] = useState({});     
-
-
     useEffect(() => {
         // mudei de 10000 para 5000
         const timer = setInterval(() => setCurrentTime(new Date()), 5000);
@@ -35,14 +28,6 @@ export default function Flashcards() {
                 const response = await api.get(`/subjects/${subjectId}/flashcards`);
                 const cards = response.data;
 
-                // const initialReviewedState = {};
-                // cards.forEach(card => {
-                //     if (card.is_reviewed) {
-                //         initialReviewedState[card.id] = true;
-                //     }
-                // });
-
-                // setReviewedCards(initialReviewedState);
                 setFlashcardsArray(cards);
             } catch (err) {
                 console.log('Erro ao buscar flashcards:', err);
@@ -126,13 +111,6 @@ export default function Flashcards() {
 
     const handleReview = async (cardId, resultado) => {
         if (!cardId) return;
-
-        // const isFirstMistake = reviewedCards[cardId] === undefined && resultado === 'erro';
-        // if (isFirstMistake) {
-        //     setErroInicial(true);
-        // } else if (!isFirstMistake && erroInicial) {
-        //     setErroInicial(false);
-        // }
 
         try {
             const response = await api.post(`/subjects/${subjectId}/flashcards/${cardId}/review`,

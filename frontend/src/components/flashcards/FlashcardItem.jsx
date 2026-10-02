@@ -43,7 +43,6 @@ export default function FlashcardItem() {
                             title={'Errei'}
                             btnType={'erro'}
                             className="text-xs py-0 px-3 h-5 leading-none flex items-center justify-center"
-                            // onClick={cardLevelInicial !== 0 ? () => { reviewCard(card.id, 'erro'); setFliped(false) } : null} />
                             onClick={() => { reviewCard(card.id, 'erro'); setFliped(false) }} />
                         <Button
                             title={'Acertei'}
