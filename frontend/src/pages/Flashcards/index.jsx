@@ -5,6 +5,7 @@ import FlashcardModal from '../../components/flashcards/FlashcardModal';
 import Button from '../../components/ui/Button';
 import api from '../../services/api';
 import backIcon from '../../assets/navigation/back.svg';
+import { fetchFlashcards } from '../../functions/fetchFlashcards';
 
 export const CardContex = createContext([]);
 
@@ -15,6 +16,12 @@ export default function Flashcards() {
     const [editingCard, setEditingCard] = useState(null)        // Card atual que está sendo editado ou apagado
     const [currentTime, setCurrentTime] = useState(new Date())
 
+    console.log('edit card', editingCard);
+
+
+    // state para resetar o card para o level 0 a partir do level 4
+    const [reset_card, setReset_card] = useState(false)
+
     useEffect(() => {
         // mudei de 10000 para 5000
         const timer = setInterval(() => setCurrentTime(new Date()), 5000);
@@ -23,17 +30,7 @@ export default function Flashcards() {
 
     // api.get - Busca dos Cards na API 
     useEffect(() => {
-        const fetchFlashcards = async () => {
-            try {
-                const response = await api.get(`/subjects/${subjectId}/flashcards`);
-                const cards = response.data;
-
-                setFlashcardsArray(cards);
-            } catch (err) {
-                console.log('Erro ao buscar flashcards:', err);
-            }
-        };
-        fetchFlashcards()
+        fetchFlashcards(subjectId, setFlashcardsArray)
     }, [subjectId])
 
     // Ordenar - Revisado para o final
@@ -127,10 +124,27 @@ export default function Flashcards() {
         }
     }
 
+    const handleResetCard = async (cardId) => {
+        console.log("Acionou handleResetCard", cardId)
+        if (!cardId) return
+
+        try {
+            const response = await api.put(`/subjects/${subjectId}/flashcards/${cardId}/reset`, {})
+            const resetedCard = response.data
+
+            setFlashcardsArray((prev) => (
+                prev.map((card) => card.id === cardId ? resetedCard : card)
+            ))
+        } catch (error) {
+            console.log('Erro ao resetar o card: ', error);
+        }
+    }
+
     const ctx = {
         subjectId: subjectId,
         setModal: setIsModalOpen,
         setEdit: setEditingCard,
+        setReset_card: setReset_card,
         reviewCard: handleReview,
         currentTime: currentTime
     }
@@ -139,7 +153,7 @@ export default function Flashcards() {
     return (<div>
         {/* CABEÇALHO */}
 
-        <div className='flex justify-between items-center mb-4 gap-3 w-full'>
+        <div className='flex justify-between items-center mb-4 gap-3 w-full '>
 
             <Link
                 to={'/home/subjects'}
@@ -180,6 +194,7 @@ export default function Flashcards() {
                     initialData={editingCard}
                     onSubmit={handleSaveCard}
                     onDelete={handleDeleteCard}
+                    onReset={handleResetCard}
                     onClose={() => { setIsModalOpen(false); setEditingCard(null) }} />
             </div>}
     </div>

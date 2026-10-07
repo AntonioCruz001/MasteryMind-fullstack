@@ -7,7 +7,7 @@ import { CardContex } from "../../pages/Flashcards";
 export default function FlashcardItem() {
     const [fliped, setFliped] = useState(false);
     const [answered, setAnswered] = useState(false);
-    const [reviewIndicator, setReviewIndicator] = useState();
+    // const [reviewIndicator, setReviewIndicator] = useState();
     const [card, func] = useContext(CardContex);
     const setEdit = func.setEdit
     const setModal = func.setModal
@@ -19,7 +19,7 @@ export default function FlashcardItem() {
         { fliped === false ? setFliped(true) : setFliped(false) }
     }
 
-    const cardLevelInicial = card.level
+    // const cardLevelInicial = card.level
 
     return (
         // wrapper
@@ -27,7 +27,7 @@ export default function FlashcardItem() {
             {/* header */}
             <div className="flex flex-row  px-4">
                 {/* <ReviewControls cardPontos={pontos} /> */}
-                <ReviewControls revIndicator={reviewIndicator} />
+                <ReviewControls />
                 <Button className="w-6" title={'⚙'} onClick={() => { setEdit(card); setModal(true) }} />
             </div>
 

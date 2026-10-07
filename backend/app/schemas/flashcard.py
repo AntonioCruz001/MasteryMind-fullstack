@@ -31,3 +31,12 @@ class FlashcardRead(FlashcardBase):
 class FlashcardReview(BaseModel):
     result: Literal["acerto", "erro"]
     firstMistake: Optional[bool] = False
+
+class FlashcardReset(BaseModel):
+    # Contém os dados padrão para o reset
+    status: FlashcardStatus = FlashcardStatus.LEARNING
+    level: int = 0
+    next_review_date: Optional[datetime] = None
+    last_result: Optional[str] = None
+    last_reviewed_at: Optional[datetime] = None
+
