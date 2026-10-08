@@ -2,9 +2,10 @@ from datetime import datetime, timedelta, timezone
 from sqlalchemy.orm import Session
 from app.models.flashcard import Flashcard
 from app.models.tags import Tag
-from app.schemas.flashcard  import FlashcardCreate, FlashcardUpdate
+from app.schemas.flashcard  import FlashcardCreate, FlashcardUpdate, FlashcardReset
 from app.enums.flashcards import FlashcardStatus
 from typing import List
+from app import models
 
 def create_flashcard(db: Session, flashcard: FlashcardCreate , subject_id: int) -> Flashcard:
     db_flashcard = Flashcard(
@@ -19,6 +20,14 @@ def create_flashcard(db: Session, flashcard: FlashcardCreate , subject_id: int) 
 
 def get_flashcards_by_subjects(db: Session, subject_id: int,skip: int = 0, limit: int = 100) -> List[Flashcard]:
     return db.query(Flashcard).filter(Flashcard.subject_id == subject_id).offset(skip).limit(limit).all()
+
+def get_all_flashcards_by_user(db: Session, user_id: int) -> list[models.Flashcard]:
+    return (
+        db.query(models.Flashcard)
+        .join(models.Subject, models.Flashcard.subject_id == models.Subject.id)
+        .filter(models.Subject.user_id == user_id)
+        .all()
+    )
 
 def delete_flashcard(db: Session, flashcard_id: int) -> bool:
     db_flashcard = db.query(Flashcard).filter(Flashcard.id == flashcard_id).first()
@@ -48,15 +57,18 @@ def review_flashcard(db: Session, flashcard_id: int, result: str) -> Flashcard:
         if new_level == 4:
             db_flashcard.status = FlashcardStatus.MASTERED
             db_flashcard.next_review_date = None
+
         else:
-            db_flashcard.status = FlashcardStatus.REVIEW
 
             if new_level == 1:
+                db_flashcard.status = FlashcardStatus.REVIEW_1
                 db_flashcard.next_review_date = now + timedelta(days=1)
             elif new_level == 2:
+                db_flashcard.status = FlashcardStatus.REVIEW_2
                 db_flashcard.next_review_date = now + timedelta(days=7)
             elif new_level == 3:
-                db_flashcard.next_review_date = now + timedelta(days=15)
+                db_flashcard.status = FlashcardStatus.REVIEW_3
+                db_flashcard.next_review_date = now + timedelta(days=7) # 14 dias depois da revisão 1
 
     elif result == "erro":
             # 1. Fluxo de Cards Novos ou em Aprendizado Inicial (Level 0)
@@ -66,23 +78,27 @@ def review_flashcard(db: Session, flashcard_id: int, result: str) -> Flashcard:
                 db_flashcard.next_review_date = now + timedelta(minutes=5)
 
             # 2. Fluxo Explícito de Cards Graduados / Em Retenção
-            elif current_status in [FlashcardStatus.REVIEW, FlashcardStatus.MASTERED, FlashcardStatus.REOPENED, FlashcardStatus.RELEARNING]:
-                db_flashcard.status = FlashcardStatus.RELEARNING
 
-                # Levels 3 e 4 caem para Level 2 (7 dias)
-                if current_level in [3, 4]:
+            # Level 4 não precisa de logica de erro. Se for resetado volta para 0. 
+
+            elif current_status == FlashcardStatus.REVIEW_3:
+                if current_level == 3:
                     db_flashcard.level = 2
+                    db_flashcard.status = FlashcardStatus.REVIEW_2
                     db_flashcard.next_review_date = now + timedelta(days=7)
-
-                # Level 2 cai para Level 1 (1 dia)
-                elif current_level == 2:
+            
+            elif current_status == FlashcardStatus.REVIEW_2:
+                if current_level == 2:
                     db_flashcard.level = 1
+                    db_flashcard.status = FlashcardStatus.REVIEW_1
                     db_flashcard.next_review_date = now + timedelta(days=1)
 
-                # Level 1 ou Level 0 caem/permanecem no Level 0 (5 min)
-                else:
+            elif current_status == FlashcardStatus.REVIEW_1:
+                if current_level == 1:
                     db_flashcard.level = 0
+                    db_flashcard.status = FlashcardStatus.LEARNING
                     db_flashcard.next_review_date = now + timedelta(minutes=5)
+
 
     db.commit()
     db.refresh(db_flashcard)
@@ -95,6 +111,20 @@ def update_flashcard(db: Session, flashcard_id: int, flashcard_update: Flashcard
 
     updated_data = flashcard_update.model_dump(exclude_unset=True)
     for field, value in updated_data.items():
+        setattr(db_flashcard, field, value)
+
+    db.commit()
+    db.refresh(db_flashcard)
+    return db_flashcard
+
+def reset_flashcard(db: Session, flashcard_id: int, subject_id: int, flashcard_reset: FlashcardReset) -> Flashcard | None:
+    db_flashcard = db.query(Flashcard).filter(Flashcard.id == flashcard_id, Flashcard.subject_id == subject_id).first()
+    if not db_flashcard:
+        return None
+
+    # Extrai os dados padrão de reset definidos no schema Pydantic
+    reset_data = flashcard_reset.model_dump()
+    for field, value in reset_data.items():
         setattr(db_flashcard, field, value)
 
     db.commit()

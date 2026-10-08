@@ -1,19 +1,27 @@
 // src/components/FlashcardModal.jsx (Parte 1/2)
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import Button from '../ui/Button';
 
-export default function FlashcardModal({ isOpen, onClose, onSubmit, onDelete, initialData = null }) {
+export default function FlashcardModal({ isOpen, onClose, onSubmit, onDelete, onReset, initialData = null }) {
     const [front, setFront] = useState('');
     const [back, setBack] = useState('');
+    const [level, setLevel] = useState('');
+
+    const [resetCautionToast, setResetCautionToast] = useState(false);
 
     useEffect(() => {
         if (initialData) {
             setFront(initialData.front || '');
             setBack(initialData.back || '');
+            setLevel(initialData.level || '');
         } else {
             setFront('');
             setBack('');
+            setLevel('');
         }
+
+        setResetCautionToast(false);
     }, [initialData, isOpen]);
 
     if (!isOpen) return null;
@@ -30,6 +38,15 @@ export default function FlashcardModal({ isOpen, onClose, onSubmit, onDelete, in
             onClose();
         }
     };
+
+    const handleReset = (e) => {
+        e.preventDefault();
+        if (initialData && onReset) {
+            onReset(initialData.id);
+            setResetCautionToast(false);
+            onClose();
+        }
+    }
 
     // src/components/FlashcardModal.jsx (Parte 2/2)
     return createPortal(
@@ -57,6 +74,41 @@ export default function FlashcardModal({ isOpen, onClose, onSubmit, onDelete, in
                             required
                         />
                     </div>
+                    {/* Testando posição do level e reset level */}
+                    <div className='flex justify-start gap-2 pt-2'>
+                        {initialData && onReset && (
+                            <div className='flex flex-col gap-1 w-68'>
+                                <div className='flex justify-between items-center  p-2 px-1 py-1'>
+                                    <span className='text-sm text-brandText'> {`Level atual: ${level ? level : '0'}`} </span>
+                                    {level > 0 && <Button
+                                        type='button'
+                                        btnType='editar'
+                                        title={'Resetar Level'}
+                                        onClick={(e) => { e.preventDefault(); setResetCautionToast(true); }}
+                                    />}
+                                </div>
+                                {/* border border-red-200 */}
+                                {resetCautionToast &&
+                                    <div className='flex items-center justify-between gap-2 bg-red-50 p-2 rounded-lg  px-1 py-1'>
+                                        <span className='text-xs text-red-700 font-medium'>Deseja mesmo resetar?</span>
+                                        <Button
+                                            type='button'
+                                            btnType='excluir'
+                                            title={'Não'}
+                                            onClick={() => setResetCautionToast(false)}
+                                        />
+                                        <Button
+                                            type='button'
+                                            btnType='excluir'
+                                            title={'Sim'}
+                                            onClick={handleReset}
+                                        />
+                                    </div>
+                                }
+                            </div>
+                        )}
+                    </div>
+
                     <div className="flex justify-end gap-2 pt-2">
                         {initialData && onDelete && (
                             <button

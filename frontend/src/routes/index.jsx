@@ -14,6 +14,8 @@ import Statistics from '../pages/Statistics';
 
 import { ProtectedRoute } from './ProtectedRoute';
 
+import DevFlashcardHarness from '../components/flashcards/DevFlashcardHarness';
+
 export default function AppRoutes() {
     return (
         <Routes>
@@ -39,10 +41,10 @@ export default function AppRoutes() {
 
             {/* Fallback de rota */}
 
-            {/* // Para teste do subject
-            // Retirar comment!! */}
-
             <Route path='*' element={<Navigate to={"/"} replace />} />
+
+            {import.meta.env.DEV && 
+            <Route path='dev/flashcards' element={<DevFlashcardHarness/>} />}
         </Routes>
     )
 }

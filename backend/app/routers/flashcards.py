@@ -1,11 +1,11 @@
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Body
 from sqlalchemy.orm import Session
 
 from app import crud, models
 from app.database import get_db
 from app.core.deps import get_current_user
-from app.schemas.flashcard import FlashcardCreate, FlashcardRead, FlashcardUpdate, FlashcardReview
+from app.schemas.flashcard import FlashcardCreate, FlashcardRead, FlashcardUpdate, FlashcardReview, FlashcardReset
 
 router = APIRouter(
     prefix="/subjects/{subject_id}/flashcards",
@@ -62,7 +62,7 @@ def delete_flashcard(
 def review_flashcard_route(
     subject_id: int,
     flashcard_id: int,
-    data: FlashcardReview,
+    data: FlashcardReview, # { reult: resultado }
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user)
 ):
@@ -72,8 +72,8 @@ def review_flashcard_route(
 
     result = data.result
     # firstMistake = data.firstMistake
-    # if result not in ["acerto","erro"]:
-    #     raise HTTPException(status_code=400, detail="Resultado inválido. Use 'acerto' ou 'erro'.")
+    if result not in ["acerto","erro"]:
+        raise HTTPException(status_code=400, detail="Resultado inválido. Use 'acerto' ou 'erro'.")
 
     updated_card = crud.review_flashcard(db=db, flashcard_id = flashcard_id, result = result)
     if not updated_card:
@@ -107,5 +107,22 @@ def update_flashcard_route(
 
     return updated_card
 
+@router.put("/{flashcard_id}/reset", response_model=FlashcardRead)
+def reset_flashcard_route(
+    subject_id:int,
+    flashcard_id:int,
+    data: FlashcardReset = Body(default_factory=FlashcardReset),
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    subject = db.query(models.Subject).filter(models.Subject.id == subject_id, models.Subject.user_id == current_user.id).first()
+    if not subject:
+        raise HTTPException(status_code=404, detail="Assunto não encontrado")
+    
+    reseted_card = crud.reset_flashcard(db=db,flashcard_id=flashcard_id,subject_id = subject_id, flashcard_reset = data)
+    if not reseted_card:
+        raise HTTPException(status_code=404, detail="Flashcard não encontrado.")
+
+    return reseted_card
     
 

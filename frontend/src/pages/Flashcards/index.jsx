@@ -5,6 +5,7 @@ import FlashcardModal from '../../components/flashcards/FlashcardModal';
 import Button from '../../components/ui/Button';
 import api from '../../services/api';
 import backIcon from '../../assets/navigation/back.svg';
+// import { fetchFlashcards } from '../../functions/fetchFlashcards';
 
 export const CardContex = createContext([]);
 
@@ -15,12 +16,11 @@ export default function Flashcards() {
     const [editingCard, setEditingCard] = useState(null)        // Card atual que está sendo editado ou apagado
     const [currentTime, setCurrentTime] = useState(new Date())
 
-    //const [teste, setTeste] = useState('Teste de contexto!')
-    // const [responseCard, setResponseCard] = useState()
-    // const [erroInicial, setErroInicial] = useState(false);
-    // Array apenas com os cards revisados
-    // const [reviewedCards, setReviewedCards] = useState({});     
+    console.log('edit card', editingCard);
 
+
+    // state para resetar o card para o level 0 a partir do level 4
+    const [reset_card, setReset_card] = useState(false)
 
     useEffect(() => {
         // mudei de 10000 para 5000
@@ -35,15 +35,11 @@ export default function Flashcards() {
                 const response = await api.get(`/subjects/${subjectId}/flashcards`);
                 const cards = response.data;
 
-                // const initialReviewedState = {};
-                // cards.forEach(card => {
-                //     if (card.is_reviewed) {
-                //         initialReviewedState[card.id] = true;
-                //     }
-                // });
+                if (setFlashcardsArray) (setFlashcardsArray(cards))
+                if (subjectId && !setFlashcardsArray) {
+                    return cards
+                }
 
-                // setReviewedCards(initialReviewedState);
-                setFlashcardsArray(cards);
             } catch (err) {
                 console.log('Erro ao buscar flashcards:', err);
             }
@@ -127,13 +123,6 @@ export default function Flashcards() {
     const handleReview = async (cardId, resultado) => {
         if (!cardId) return;
 
-        // const isFirstMistake = reviewedCards[cardId] === undefined && resultado === 'erro';
-        // if (isFirstMistake) {
-        //     setErroInicial(true);
-        // } else if (!isFirstMistake && erroInicial) {
-        //     setErroInicial(false);
-        // }
-
         try {
             const response = await api.post(`/subjects/${subjectId}/flashcards/${cardId}/review`,
                 { result: resultado }
@@ -149,10 +138,27 @@ export default function Flashcards() {
         }
     }
 
+    const handleResetCard = async (cardId) => {
+        console.log("Acionou handleResetCard", cardId)
+        if (!cardId) return
+
+        try {
+            const response = await api.put(`/subjects/${subjectId}/flashcards/${cardId}/reset`, {})
+            const resetedCard = response.data
+
+            setFlashcardsArray((prev) => (
+                prev.map((card) => card.id === cardId ? resetedCard : card)
+            ))
+        } catch (error) {
+            console.log('Erro ao resetar o card: ', error);
+        }
+    }
+
     const ctx = {
         subjectId: subjectId,
         setModal: setIsModalOpen,
         setEdit: setEditingCard,
+        setReset_card: setReset_card,
         reviewCard: handleReview,
         currentTime: currentTime
     }
@@ -161,7 +167,7 @@ export default function Flashcards() {
     return (<div>
         {/* CABEÇALHO */}
 
-        <div className='flex justify-between items-center mb-4 gap-3 w-full'>
+        <div className='flex justify-between items-center mb-4 gap-3 w-full '>
 
             <Link
                 to={'/home/subjects'}
@@ -202,6 +208,7 @@ export default function Flashcards() {
                     initialData={editingCard}
                     onSubmit={handleSaveCard}
                     onDelete={handleDeleteCard}
+                    onReset={handleResetCard}
                     onClose={() => { setIsModalOpen(false); setEditingCard(null) }} />
             </div>}
     </div>

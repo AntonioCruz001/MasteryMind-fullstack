@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer
 
 from app.database import engine, Base
-from app.routers import subjects,users, auth, flashcards
+from app.routers import subjects,users, auth, flashcards, global_flashcards
 from app import models
 
 __all__ = ["auth_router", "users_router", "subjects_router"]
@@ -37,6 +37,7 @@ app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(subjects.router)
 app.include_router(flashcards.router)
+app.include_router(global_flashcards.router)
 
 @app.get("/")
 def health_check():

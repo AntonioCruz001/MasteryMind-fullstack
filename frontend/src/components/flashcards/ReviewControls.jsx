@@ -1,35 +1,15 @@
 import { useContext, useEffect, useState } from "react";
 import { CardContex } from "../../pages/Flashcards";
+import { STATUS_COLORS } from "../../constants/statusColors";
+import { formatDate } from "../../functions/fornatDate";
+import { parseTargetDate } from "../../functions/parseTargetDate";
 import ReviewCountdown from "./ReviewCountDown";
 
-// 1. Constantes e utilitários fora do componente (evita recriação a cada render)
-const STATUS_COLORS = [
-  { active: "bg-gray-500 border-indigo-700", inactive: "bg-gray-200" },
-  { active: "bg-red-500 border-indigo-700", inactive: "bg-red-200" },
-  { active: "bg-orange-500 border-indigo-700", inactive: "bg-orange-200" },
-  { active: "bg-lime-500 border-indigo-700", inactive: "bg-lime-200" },
-  { active: "bg-green-500 border-indigo-700", inactive: "bg-green-200" },
-];
 
-const formatDate = (isoString) => {
-  if (!isoString) return "";
-  const [datePart] = isoString.split("T");
-  const [year, month, day] = datePart.split("-");
-  return `${day}-${month}-${year}`;
-};
-
-export default function ReviewControls({ setWaiting5 }) {
+export default function ReviewControls() {
   const cardContext = useContext(CardContex);
   const card = cardContext?.[0];
-
   const currentTime = cardContext?.[1]?.currentTime || new Date();
-
-  const parseTargetDate = (dateStr) => {
-    if (!dateStr) return null;
-    const formattedStr = typeof dateStr === 'string' && !dateStr.endsWith('Z') && !dateStr.includes('+')
-      ? `${dateStr}Z` : dateStr;
-    return new Date(formattedStr)
-  }
 
   const nextReviewDateObj = parseTargetDate(card?.next_review_date);
 
@@ -45,14 +25,14 @@ export default function ReviewControls({ setWaiting5 }) {
 
     // Se for level 4
     if (card.next_review_date === null && card.level >= 4) return "Memorizado!";
-    
+
     // Se for erro novo ou erro inicial
     if (card.level === 0) {
-      if (card.status === "NEW"){
+      if (card.status === "NEW") {
         return "Novo Card";
       }
       if (isWaiting5) {
-        return <ReviewCountdown targetDate={card.next_review_date} defaultMinutes={5}/>
+        return <ReviewCountdown targetDate={card.next_review_date} defaultMinutes={5} />
       }
     }
 
@@ -66,7 +46,7 @@ export default function ReviewControls({ setWaiting5 }) {
         reviewDate.getMonth() === today.getMonth() &&
         reviewDate.getFullYear() === today.getFullYear();
 
-      if (isToday) { return 'Revisão: Hoje'; }
+      if (isToday) { return <ReviewCountdown targetDate={card.next_review_date} defaultMinutes={5} />; }
     }
 
     // Se a revisão for futura
