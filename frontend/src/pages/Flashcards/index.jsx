@@ -5,7 +5,7 @@ import FlashcardModal from '../../components/flashcards/FlashcardModal';
 import Button from '../../components/ui/Button';
 import api from '../../services/api';
 import backIcon from '../../assets/navigation/back.svg';
-import { fetchFlashcards } from '../../functions/fetchFlashcards';
+// import { fetchFlashcards } from '../../functions/fetchFlashcards';
 
 export const CardContex = createContext([]);
 
@@ -30,7 +30,21 @@ export default function Flashcards() {
 
     // api.get - Busca dos Cards na API 
     useEffect(() => {
-        fetchFlashcards(subjectId, setFlashcardsArray)
+        const fetchFlashcards = async () => {
+            try {
+                const response = await api.get(`/subjects/${subjectId}/flashcards`);
+                const cards = response.data;
+
+                if (setFlashcardsArray) (setFlashcardsArray(cards))
+                if (subjectId && !setFlashcardsArray) {
+                    return cards
+                }
+
+            } catch (err) {
+                console.log('Erro ao buscar flashcards:', err);
+            }
+        };
+        fetchFlashcards()
     }, [subjectId])
 
     // Ordenar - Revisado para o final

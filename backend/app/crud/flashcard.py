@@ -5,6 +5,7 @@ from app.models.tags import Tag
 from app.schemas.flashcard  import FlashcardCreate, FlashcardUpdate, FlashcardReset
 from app.enums.flashcards import FlashcardStatus
 from typing import List
+from app import models
 
 def create_flashcard(db: Session, flashcard: FlashcardCreate , subject_id: int) -> Flashcard:
     db_flashcard = Flashcard(
@@ -19,6 +20,14 @@ def create_flashcard(db: Session, flashcard: FlashcardCreate , subject_id: int) 
 
 def get_flashcards_by_subjects(db: Session, subject_id: int,skip: int = 0, limit: int = 100) -> List[Flashcard]:
     return db.query(Flashcard).filter(Flashcard.subject_id == subject_id).offset(skip).limit(limit).all()
+
+def get_all_flashcards_by_user(db: Session, user_id: int) -> list[models.Flashcard]:
+    return (
+        db.query(models.Flashcard)
+        .join(models.Subject, models.Flashcard.subject_id == models.Subject.id)
+        .filter(models.Subject.user_id == user_id)
+        .all()
+    )
 
 def delete_flashcard(db: Session, flashcard_id: int) -> bool:
     db_flashcard = db.query(Flashcard).filter(Flashcard.id == flashcard_id).first()

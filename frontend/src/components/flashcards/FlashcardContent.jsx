@@ -34,7 +34,7 @@ export default function FlashcardContent({ fliped, handleClick, ...props }) {
         }
     >
         {!available && (
-            <span className="text-xs text-center text-stone-500 font-semibold">
+            <span className="text-xs text-center text-stone-800 font-semibold">
 
                 {/* Customizar texto para cada situação. Usando cores de erro e acerto, ou cores dos níveis. */}
                 {card.status === "MASTERED"
