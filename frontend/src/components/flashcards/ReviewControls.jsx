@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { CardContex } from "../../pages/Flashcards";
 import { STATUS_COLORS } from "../../constants/statusColors";
 import { formatDate } from "../../functions/fornatDate";
@@ -15,7 +15,7 @@ export default function ReviewControls() {
 
   const isWaiting5 =
     card?.level === 0 &&
-    card.status === "LEARNING" &&
+    card?.status === "LEARNING" &&
     nextReviewDateObj &&
     nextReviewDateObj > currentTime;
 
@@ -24,9 +24,9 @@ export default function ReviewControls() {
     if (!card) return "Sem dados";
 
     // Se for level 4
-    if (card.next_review_date === null && card.level >= 4) return "Memorizado!";
+    if (card.next_review_date === null && (card.level >= 4 || card.status === "MASTERED")) return "Memorizado!";
 
-    // Se for erro novo ou erro inicial
+    // Se for novo ou erro inicial
     if (card.level === 0) {
       if (card.status === "NEW") {
         return "Novo Card";
@@ -37,22 +37,22 @@ export default function ReviewControls() {
     }
 
     // Se a revisão for hoje
-    if (card.next_review_date) {
-      const reviewDate = nextReviewDateObj;
-      const today = new Date();
+    // if (card.next_review_date) {
+    //   const reviewDate = nextReviewDateObj;
+    //   const today = new Date();
 
-      const isToday =
-        reviewDate.getDate() === today.getDate() &&
-        reviewDate.getMonth() === today.getMonth() &&
-        reviewDate.getFullYear() === today.getFullYear();
+    // const isToday =
+    //   reviewDate.getDate() === today.getDate() &&
+    //   reviewDate.getMonth() === today.getMonth() &&
+    //   reviewDate.getFullYear() === today.getFullYear();
 
-      if (isToday) { return <ReviewCountdown targetDate={card.next_review_date} defaultMinutes={5} />; }
-    }
+    // if (isToday) { return <ReviewCountdown targetDate={card.next_review_date} defaultMinutes={5} />; }
 
     // Se a revisão for futura
     const formattedDate = formatDate(card.next_review_date);
     return formattedDate ? `Acerto! Revisão: ${formattedDate}` : "Sem data";
-  };
+  }
+
 
   // Cálculo de índice ativo feito uma única vez fora do map
   const activeIndex = Math.min(card?.level ?? 0, STATUS_COLORS.length - 1);
