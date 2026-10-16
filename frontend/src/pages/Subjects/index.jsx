@@ -16,10 +16,13 @@ function Subjects() {
 
     const fetchSubjects = async () => {
         try {
+            setLoading(true);
             const response = await api.get('/subjects'); // subject -> subjects
             setSubjects(response.data);
         } catch (err) {
             console.log('Erro ao buscar dados:', err);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -59,39 +62,43 @@ function Subjects() {
                     onClick={() => setIsModalOpen(true)}
                     title={"+ Nova Categoria"}
                     btnType={'criar'}
-                    // className="bg-brandPrimary hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition-all text-sm cursor-pointer"
+                // className="bg-brandPrimary hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition-all text-sm cursor-pointer"
                 />
             </div>
 
             {/* Lista de Categorias (Cards Clicáveis) */}
             <div className="flex flex-col gap-3">
-                {subjects.length === 0 ? (
-                    <p className="text-gray-500 text-sm text-center py-10 bg-brandCard rounded-2xl border border-gray-100 shadow-sm">
-                        Nenhuma categoria cadastrada. Clique no botão acima para começar!
-                    </p>
-                ) : (
-                    <div className="grid grid-cols-1 gap-4">
-                        {subjects.map((subject) => (
-                            <div
-                                key={subject.id}
-                                onClick={() => navigate(`/home/subjects/${subject.id}/flashcards`)}
-                                className="bg-brandCard p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-1 cursor-pointer hover:shadow-md hover:border-brandPrimary transition-all group"
-                            >
-                                <div className="flex justify-between items-center">
-                                    <span className="font-bold text-lg text-brandText group-hover:text-brandPrimary transition-colors">
-                                        {subject.name}
-                                    </span>
-                                    <span className="text-brandPrimary opacity-0 group-hover:opacity-100 transition-opacity">
-                                        ➔
-                                    </span>
+                {loading ? (<div className="flex flex-col items-center justify-center py-12 gap-3">
+                    <div className="w-8 h-8 border-3 border-brandPrimary border-t-transparent rounded-full animate-spin" />
+                    <span className="text-stone-500 text-sm font-medium">Carregando Categorias...</span>
+                </div>)
+                    : subjects.length === 0 ? (
+                        <p className="text-gray-500 text-sm text-center py-10 bg-brandCard rounded-2xl border border-gray-100 shadow-sm">
+                            Nenhuma categoria cadastrada. Clique no botão acima para começar!
+                        </p>
+                    ) : (
+                        <div className="grid grid-cols-1 gap-4">
+                            {subjects.map((subject) => (
+                                <div
+                                    key={subject.id}
+                                    onClick={() => navigate(`/home/subjects/${subject.id}/flashcards`)}
+                                    className="bg-brandCard p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-1 cursor-pointer hover:shadow-md hover:border-brandPrimary transition-all group"
+                                >
+                                    <div className="flex justify-between items-center">
+                                        <span className="font-bold text-lg text-brandText group-hover:text-brandPrimary transition-colors">
+                                            {subject.name}
+                                        </span>
+                                        <span className="text-brandPrimary opacity-0 group-hover:opacity-100 transition-opacity">
+                                            ➔
+                                        </span>
+                                    </div>
+                                    {subject.description && (
+                                        <span className="text-sm text-gray-500 line-clamp-2">{subject.description}</span>
+                                    )}
                                 </div>
-                                {subject.description && (
-                                    <span className="text-sm text-gray-500 line-clamp-2">{subject.description}</span>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                )}
+                            ))}
+                        </div>
+                    )}
             </div>
 
             {/* Modal de Cadastro (Popup) */}

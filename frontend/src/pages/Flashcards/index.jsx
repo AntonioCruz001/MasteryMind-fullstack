@@ -11,6 +11,7 @@ export const CardContex = createContext([]);
 
 export default function Flashcards() {
     const { subjectId } = useParams()                           // Recebe o subjectId da URL
+    const [loading, setLoading] = useState(true);               // Controle de loading
     const [flashcardsArray, setFlashcardsArray] = useState([]); // Contem o array dos flashcards
     const [isModalOpen, setIsModalOpen] = useState(false)       // Controle de abrir o modal
     const [editingCard, setEditingCard] = useState(null)        // Card atual que está sendo editado ou apagado
@@ -32,6 +33,7 @@ export default function Flashcards() {
     useEffect(() => {
         const fetchFlashcards = async () => {
             try {
+                setLoading(true);
                 const response = await api.get(`/subjects/${subjectId}/flashcards`);
                 const cards = response.data;
 
@@ -42,6 +44,8 @@ export default function Flashcards() {
 
             } catch (err) {
                 console.log('Erro ao buscar flashcards:', err);
+            } finally {
+                setLoading(false);
             }
         };
         fetchFlashcards()
@@ -190,13 +194,17 @@ export default function Flashcards() {
         {/* ARRAY DE FLASHCARDS */}
 
         <div className='flex flex-col gap-3'>
-            {sortedFlashcards.length === 0 ? <div>Nenhum Flashcard encontrado!</div> :
-                sortedFlashcards.map((card) => (
-                    // O value expoxto na prop é o card atual de 'sortedFlashcards'
-                    <CardContex.Provider key={card.id} value={[card, ctx]}>
-                        <FlashcardItem />
-                    </CardContex.Provider>
-                ))}
+            {loading ? (<div className="flex flex-col items-center justify-center py-12 gap-3">
+                <div className="w-8 h-8 border-3 border-brandPrimary border-t-transparent rounded-full animate-spin" />
+                <span className="text-stone-500 text-sm font-medium">Carregando flashcards...</span>
+            </div>)
+                : sortedFlashcards.length === 0 ? <div>Nenhum Flashcard encontrado!</div> :
+                    sortedFlashcards.map((card) => (
+                        // O value expoxto na prop é o card atual de 'sortedFlashcards'
+                        <CardContex.Provider key={card.id} value={[card, ctx]}>
+                            <FlashcardItem />
+                        </CardContex.Provider>
+                    ))}
         </div>
 
         {isModalOpen &&
