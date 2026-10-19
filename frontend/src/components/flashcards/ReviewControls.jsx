@@ -58,7 +58,7 @@ export default function ReviewControls() {
   const activeIndex = Math.min(card?.level ?? 0, STATUS_COLORS.length - 1);
 
   return (
-    <div className="flex flex-row justify-between items-center px-4 grow gap-4">
+    <div className="flex flex-col sm:flex-row justify-between items-center px-4 grow gap-4">
       {/* <div className="w-48 shrink-0 text-sm font-medium text-stone-700"> */}
       <div className="flex-1 min-w-0 text-sm font-medium text-stone-700 truncate">
         {getReviewText()}

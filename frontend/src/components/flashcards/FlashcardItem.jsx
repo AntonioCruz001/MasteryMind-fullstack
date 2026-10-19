@@ -23,7 +23,7 @@ export default function FlashcardItem() {
 
     return (
         // wrapper
-        <div className="rounded-2xl bg-stone-300 shadow-sm flex flex-col gap-4 p-4">
+        <div className="rounded-2xl bg-stone-100 shadow-sm flex flex-col gap-4 p-4">
             {/* header */}
             <div className="flex flex-row  px-4">
                 {/* <ReviewControls cardPontos={pontos} /> */}
