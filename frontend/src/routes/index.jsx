@@ -12,8 +12,8 @@ import Flashcards from '../pages/Flashcards';
 import Review from '../pages/Review';
 import Statistics from '../pages/Statistics';
 
-// import Testes from '../pages/CardTest';
-// import CardTestList from '../pages/CardTestList';
+import Testes from '../pages/CardTest';
+import CardTestList from '../pages/CardTestList';
 
 import { ProtectedRoute } from './ProtectedRoute';
 

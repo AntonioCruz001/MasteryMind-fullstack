@@ -43,12 +43,12 @@ export default function FlashcardContent({ fliped, handleClick, ...props }) {
             </span>
         )}
 
-        {!fliped ? <div className="text-center">
+        {!fliped ? <div className="text-center whitespace-pre-wrap">
             {card.front}
             {/* {console.log('exibindo front')} */}
 
         </div> :
-            <div className="text-center">
+            <div className="text-center whitespace-pre-wrap">
                 {card.back}
                 {/* {console.log('exibindo back')} */}
             </div>
