@@ -42,7 +42,6 @@ export default function AppRoutes() {
                 <Route path='/home/statistics' element={<Statistics />} />
                 <Route path='/home/tests' element={<Tests />} />
                 <Route path='/home/CardTest/:grupoId/CardTestList' element={<CardTestList />} />
-
             </Route>
 
             {/* Fallback de rota */}
