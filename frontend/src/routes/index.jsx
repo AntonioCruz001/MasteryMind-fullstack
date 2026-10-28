@@ -12,8 +12,8 @@ import Flashcards from '../pages/Flashcards';
 import Review from '../pages/Review';
 import Statistics from '../pages/Statistics';
 
-// import Testes from '../pages/CardTest';
-// import CardTestList from '../pages/CardTestList';
+import Tests from '../pages/Tests';
+import CardTestList from '../pages/CardTestList';
 
 import { ProtectedRoute } from './ProtectedRoute';
 
@@ -40,9 +40,9 @@ export default function AppRoutes() {
                 <Route path='/home/subjects/:subjectId/flashcards' element={<Flashcards />} />
                 <Route path='/home/review' element={<Review />} />
                 <Route path='/home/statistics' element={<Statistics />} />
-                {/* Testes Temporários */}
-                {/* <Route path='/home/CardTest' element={<Testes />} />
-                <Route path='/home/CardTest/:grupoId/CardTestList' element={<CardTestList />} /> */}
+                <Route path='/home/tests' element={<Tests />} />
+                <Route path='/home/CardTest/:grupoId/CardTestList' element={<CardTestList />} />
+
             </Route>
 
             {/* Fallback de rota */}
