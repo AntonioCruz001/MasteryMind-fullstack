@@ -57,3 +57,17 @@ def update_group(
         "name": group.name,
         "flashcard_ids": [card.id for card in group.flashcards]
     }
+
+@router.delete("/{group_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_group(
+    group_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    success = crud_test_group.delete_test_group(db=db, group_id=group_id, user_id=current_user.id)
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Grupo de teste não encontrado"
+        )
+    return None

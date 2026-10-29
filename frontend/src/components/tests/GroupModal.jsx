@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Button from "../ui/Button";
 import { createPortal } from "react-dom";
 
-export default function GroupModal({ editing, setEditing, allCards, setAllCards, selectedCards, setSelectedCards, groupName, setGroupName, handleSaveGroup, initialData = null, setIsModalOpen, ...props }) {
+export default function GroupModal({ editing, setEditing, allCards, setAllCards, selectedCards, setSelectedCards, groupName, setGroupName, handleSaveGroup, initialData = null, setIsModalOpen, onDelete, ...props }) {
 
 
     useEffect(() => {
@@ -73,7 +73,10 @@ export default function GroupModal({ editing, setEditing, allCards, setAllCards,
                     </div>
 
                     <div className='flex justify-end gap-2 pt-2 border-t border-gray-100'>
-                        <Button type='button' title={'Cancelar'} className='bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-4 rounded-lg text-sm font-bold' onClick={() => {setEditing(false), setIsModalOpen(false)}} />
+                        <Button type='button' title={'Cancelar'} className='bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-4 rounded-lg text-sm font-bold' onClick={() => { setEditing(false), setIsModalOpen(false) }} />
+                        {editing && initialData && onDelete && (
+                            <Button type='button' btnType='excluir' title={'Excluir'} onClick={() => onDelete(initialData.id)} />
+                        )}
                         <Button type='submit' title={'Salvar Grupo'} btnType={'criar'} />
                     </div>
                 </form>

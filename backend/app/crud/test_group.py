@@ -36,3 +36,11 @@ def update_test_group(db: Session, group_id: int, data: TestGroupCreate, user_id
     db.commit()
     db.refresh(db_group)
     return db_group
+
+def delete_test_group(db: Session, group_id: int, user_id: int) -> bool:
+    db_group = db.query(TestGroup).filter(TestGroup.id == group_id, TestGroup.user_id == user_id).first()
+    if db_group:
+        db.delete(db_group)
+        db.commit()
+        return True
+    return False

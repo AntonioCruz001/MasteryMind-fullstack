@@ -14,7 +14,7 @@ export default function CardTestList() {
     const [cards, setCards] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [flipped, setFlipped] = useState(false);
-    
+
     // Contadores de desempenho do teste
     const [results, setResults] = useState({ acertos: 0, erros: 0 });
     const [isFinished, setIsFinished] = useState(false);
@@ -112,11 +112,25 @@ export default function CardTestList() {
         <div className="flex flex-col gap-4 max-w-md mx-auto">
             {/* Header do Teste */}
             <div className="flex justify-between items-center bg-brandCard p-3 rounded-xl border border-brandBorder text-xs text-brandTextMuted">
-                <button onClick={() => navigate('/home/tests')} className="flex items-center gap-1 hover:text-brandPrimary">
-                    <img src={backIcon} alt="voltar" className="w-3 h-3" /> Sair
+                <button onClick={() => navigate('/home/tests')} className='flex items-center justify-center
+              gap-2 px-8 sm:px-4 py-2.5 
+              bg-brandCard border border-brandBorder shadow-xs rounded-xl 
+              text-brandText fontmedium text-sm
+              hover:bg-[#d4dddf] active:scale-95 transition-all shrink-0 select-none
+              '>
+                    <img src={backIcon} alt="voltar" className='w-6 h-6 object-contain pointer-events-none' /> Sair
+
+
                 </button>
-                <span className="font-semibold">{groupName}</span>
-                <span>{currentIndex + 1} de {cards.length}</span>
+                <div className='flex items-center justify-center
+              gap-2 px-8 sm:px-4 py-2.5'>
+                    <span className="font-semibold">{groupName}</span>
+                </div>
+
+                <div className='flex items-center justify-center
+              gap-2 px-8 sm:px-4 py-2.5'>
+                    <span>{currentIndex + 1} de {cards.length}</span>
+                </div>
             </div>
 
             {/* Cartão de Execução */}

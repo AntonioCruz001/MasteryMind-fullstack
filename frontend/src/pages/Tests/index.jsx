@@ -38,31 +38,6 @@ export default function TestGroups() {
         fetchData();
     }, []);
 
-    // const handleCheckboxChange = (cardId) => {
-    //     setSelectedCards(prev =>
-    //         prev.includes(cardId) ? prev.filter(id => id !== cardId) : [...prev, cardId]
-    //     );
-    // };
-
-    // const handleCreateGroup = async (e) => {
-    //     e.preventDefault();
-    //     if (!groupName.trim() || selectedCards.length === 0) return;
-
-    //     try {
-    //         const response = await api.post('/test-groups', {
-    //             name: groupName,
-    //             flashcard_ids: selectedCards
-    //         });
-
-    //         setGroups(prev => [...prev, response.data]);
-    //         setGroupName('');
-    //         setSelectedCards([]);
-    //         setIsModalOpen(false);
-    //     } catch (err) {
-    //         console.error('Erro ao criar grupo de teste:', err);
-    //     }
-    // };
-
     const handleSaveGroup = async (e) => {
         e.preventDefault();
         if (!groupName.trim() || selectedCards.length === 0) return;
@@ -100,15 +75,26 @@ export default function TestGroups() {
         }
     };
 
-    // const handleEditGroup(e){
-    //     e.preventDefault();
+    const handleDeleteGroup = async (groupId) => {
+        if (!groupId) return;
 
-    // }
+        try {
+            await api.delete(`/test-groups/${groupId}`);
+            setGroups(prev => prev.filter(group => group.id !== groupId));
+            setIsModalOpen(false);
+            setEditing(false);
+            setEditingGroup(null);
+            setGroupName('');
+            setSelectedCards([]);
+        } catch (err) {
+            console.error('Erro ao excluir o grupo de teste:', err);
+        }
+    };
 
     return (
         <div className='flex flex-col w-full gap-6'>
-            <div className='flex justify-between items-center bg-brandCard p-4 rounded-2xl border border-brandBorder shadow-xs'>
-                <div>
+            <div className='flex justify-between items-center gap-2 bg-brandCard p-4 rounded-2xl border border-brandBorder shadow-xs'>
+                <div className='w-60'>
                     <h2 className='text-xl font-bold text-brandText'>Grupos de Testes</h2>
                     <p className='text-xs text-brandTextMuted'>Simulados personalizados sem impacto na repetição espaçada</p>
                 </div>
@@ -161,6 +147,7 @@ export default function TestGroups() {
                     setSelectedCards={setSelectedCards}
                     groupName={groupName}
                     setGroupName={setGroupName}
+                    onDelete={handleDeleteGroup}
                 />}
         </div>
     );
