@@ -38,3 +38,22 @@ def list_groups(
         }
         for g in groups
     ]
+
+@router.put("/{group_id}", response_model=TestGroupRead)
+def update_group(
+    group_id: int,
+    data: TestGroupCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    group = crud_test_group.update_test_group(db=db, group_id=group_id, data=data, user_id=current_user.id)
+    if not group:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Grupo de teste não encontrado"
+        )
+    return {
+        "id": group.id,
+        "name": group.name,
+        "flashcard_ids": [card.id for card in group.flashcards]
+    }

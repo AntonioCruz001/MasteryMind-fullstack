@@ -4,16 +4,19 @@ import { useNavigate } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import Button from '../../components/ui/Button';
 import api from '../../services/api';
+import GroupModal from '../../components/tests/GroupModal';
 
 export default function TestGroups() {
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    
+
     const [groups, setGroups] = useState([]);
-    const [allCards, setAllCards] = useState([]);
-    const [groupName, setGroupName] = useState('');
-    const [selectedCards, setSelectedCards] = useState([]);
+    const [allCards, setAllCards] = useState([]); //
+    const [groupName, setGroupName] = useState(''); // 
+    const [selectedCards, setSelectedCards] = useState([]); //
     const [loading, setLoading] = useState(false);
+    const [editing, setEditing] = useState(false);
+    const [editingGroup, setEditingGroup] = useState('')
 
     // Buscar Grupos e Cards do Servidor em paralelo
     useEffect(() => {
@@ -35,30 +38,72 @@ export default function TestGroups() {
         fetchData();
     }, []);
 
-    const handleCheckboxChange = (cardId) => {
-        setSelectedCards(prev => 
-            prev.includes(cardId) ? prev.filter(id => id !== cardId) : [...prev, cardId]
-        );
-    };
+    // const handleCheckboxChange = (cardId) => {
+    //     setSelectedCards(prev =>
+    //         prev.includes(cardId) ? prev.filter(id => id !== cardId) : [...prev, cardId]
+    //     );
+    // };
 
-    const handleCreateGroup = async (e) => {
+    // const handleCreateGroup = async (e) => {
+    //     e.preventDefault();
+    //     if (!groupName.trim() || selectedCards.length === 0) return;
+
+    //     try {
+    //         const response = await api.post('/test-groups', {
+    //             name: groupName,
+    //             flashcard_ids: selectedCards
+    //         });
+
+    //         setGroups(prev => [...prev, response.data]);
+    //         setGroupName('');
+    //         setSelectedCards([]);
+    //         setIsModalOpen(false);
+    //     } catch (err) {
+    //         console.error('Erro ao criar grupo de teste:', err);
+    //     }
+    // };
+
+    const handleSaveGroup = async (e) => {
         e.preventDefault();
         if (!groupName.trim() || selectedCards.length === 0) return;
 
         try {
-            const response = await api.post('/test-groups', {
-                name: groupName,
-                flashcard_ids: selectedCards
-            });
+            if (editing && editingGroup) {
+                // Atualiza o grupo existente (PUT)
+                const response = await api.put(`/test-groups/${editingGroup.id}`, {
+                    name: groupName,
+                    flashcard_ids: selectedCards
+                });
 
-            setGroups(prev => [...prev, response.data]);
+                console.log("=== [FRONTEND LOG] Resposta do PUT:", response.data);
+                setGroups(prev =>
+                    prev.map(group => group.id === editingGroup.id ? response.data : group)
+                );
+            } else {
+                // Cria um novo grupo (POST)
+                const response = await api.post('/test-groups', {
+                    name: groupName,
+                    flashcard_ids: selectedCards
+                });
+
+                setGroups(prev => [...prev, response.data]);
+            }
+
+            // Limpa os estados e fecha o modal
             setGroupName('');
             setSelectedCards([]);
             setIsModalOpen(false);
+            setEditing(false);
+            setEditingGroup(null);
         } catch (err) {
-            console.error('Erro ao criar grupo de teste:', err);
+            console.error('Erro ao salvar o grupo de teste:', err);
         }
     };
+
+    // const handleEditGroup(e){
+    //     e.preventDefault();
+
+    // }
 
     return (
         <div className='flex flex-col w-full gap-6'>
@@ -94,72 +139,29 @@ export default function TestGroups() {
                             <span className='text-xs text-brandTextMuted'>
                                 {grupo.flashcard_ids.length} cards
                             </span>
+                            <Button className="w-8" title={'⚙'} onClick={(e) => (setIsModalOpen(true), e.stopPropagation(), setEditing(true), setEditingGroup(grupo))} />
                         </div>
                     ))
                 )}
             </div>
 
+
             {/* Modal de Criação */}
-            {isModalOpen && createPortal(
-                <div className='fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50'>
-                    <div className='bg-brandCard rounded-2xl p-6 w-full max-w-lg shadow-xl border border-gray-100 flex flex-col gap-4 max-h-[90vh] overflow-hidden'>
-                        <div className='flex justify-between items-center pb-2 border-b border-gray-100'>
-                            <h3 className='text-lg font-bold text-brandText'>Criar Novo Grupo de Teste</h3>
-                            <button onClick={() => setIsModalOpen(false)} className='text-gray-400 hover:text-gray-700 font-bold cursor-pointer'>✕</button>
-                        </div>
-
-                        <form onSubmit={handleCreateGroup} className='flex flex-col gap-4 overflow-hidden'>
-                            <div className='flex flex-col gap-1.5'>
-                                <label className='text-sm font-semibold text-brandText'>Nome do Grupo</label>
-                                <input
-                                    type='text'
-                                    placeholder='Ex: Simulado Geral'
-                                    className='w-full border rounded-lg border-gray-300 p-2.5 text-sm bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-brandPrimary/20 focus:border-brandPrimary transition-all'
-                                    value={groupName}
-                                    onChange={(e) => setGroupName(e.target.value)}
-                                    required
-                                />
-                            </div>
-
-                            <div className='flex flex-col gap-1.5 flex-1 overflow-hidden'>
-                                <label className='text-sm font-semibold text-brandText'>
-                                    Escolha os cards ({selectedCards.length} selecionados)
-                                </label>
-                                <div className='border border-gray-200 rounded-lg overflow-y-auto max-h-60 p-2 flex flex-col gap-2 bg-gray-50'>
-                                    {allCards.map((card) => {
-                                        const isChecked = selectedCards.includes(card.id);
-                                        return (
-                                            <div
-                                                key={card.id}
-                                                onClick={() => handleCheckboxChange(card.id)}
-                                                className={`flex items-center gap-3 p-2.5 rounded-lg border cursor-pointer transition-all ${
-                                                    isChecked ? 'bg-brandPrimaryLight border-brandPrimary' : 'bg-white border-gray-200 hover:bg-gray-100'
-                                                }`}
-                                            >
-                                                <input
-                                                    type='checkbox'
-                                                    checked={isChecked}
-                                                    onChange={() => {}}
-                                                    className='accent-brandPrimary w-4 h-4 cursor-pointer'
-                                                />
-                                                <div className='flex-1 min-w-0'>
-                                                    <p className='text-xs font-semibold text-brandText truncate'>{card.front}</p>
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-
-                            <div className='flex justify-end gap-2 pt-2 border-t border-gray-100'>
-                                <Button type='button' title={'Cancelar'} className='bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-4 rounded-lg text-sm font-bold' onClick={() => setIsModalOpen(false)} />
-                                <Button type='submit' title={'Salvar Grupo'} btnType={'criar'} />
-                            </div>
-                        </form>
-                    </div>
-                </div>,
-                document.getElementById('modal')
-            )}
+            {isModalOpen
+                &&
+                <GroupModal
+                    initialData={editingGroup}
+                    editing={editing}
+                    setEditing={setEditing}
+                    handleSaveGroup={handleSaveGroup}
+                    setIsModalOpen={setIsModalOpen}
+                    allCards={allCards}
+                    setAllCards={setAllCards}
+                    selectedCards={selectedCards}
+                    setSelectedCards={setSelectedCards}
+                    groupName={groupName}
+                    setGroupName={setGroupName}
+                />}
         </div>
     );
 }
