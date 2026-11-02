@@ -1,55 +1,32 @@
 import { useState, useEffect, createContext, useMemo } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useOutletContext } from 'react-router-dom';
 import FlashcardItem from '../../components/flashcards/FlashcardItem';
 import FlashcardModal from '../../components/flashcards/FlashcardModal';
 import Button from '../../components/ui/Button';
 import api from '../../services/api';
 import backIcon from '../../assets/navigation/back.svg';
-// import { fetchFlashcards } from '../../functions/fetchFlashcards';
+import { useCurrentTime } from '../../hooks/useCurrentTime'
+import { useFlashcards } from '../../hooks/useFlashcards';
 
 export const CardContex = createContext([]);
 
 export default function Flashcards() {
     const { subjectId } = useParams()                           // Recebe o subjectId da URL
-    const [loading, setLoading] = useState(true);               // Controle de loading
-    const [flashcardsArray, setFlashcardsArray] = useState([]); // Contem o array dos flashcards
     const [isModalOpen, setIsModalOpen] = useState(false)       // Controle de abrir o modal
     const [editingCard, setEditingCard] = useState(null)        // Card atual que está sendo editado ou apagado
-    const [currentTime, setCurrentTime] = useState(new Date())
 
-    console.log('edit card', editingCard);
+    const currentTime = useCurrentTime(5000)                    // currentTime vem de custom hook useCurrentTime
 
+    // api.get - Busca dos Cards na API 
+    
+    // flashcards e loading vem do custom hook useFlashcards
+    // Ao passar o subjectId, retorna os Fc do assunto em questão
+    const { flashcards: flashcardsArray, setFlashcards: setFlashcardsArray, loading } = useFlashcards(subjectId)
 
     // state para resetar o card para o level 0 a partir do level 4
     const [reset_card, setReset_card] = useState(false)
 
-    useEffect(() => {
-        // mudei de 10000 para 5000
-        const timer = setInterval(() => setCurrentTime(new Date()), 5000);
-        return () => clearInterval(timer);
-    }, [])
 
-    // api.get - Busca dos Cards na API 
-    useEffect(() => {
-        const fetchFlashcards = async () => {
-            try {
-                setLoading(true);
-                const response = await api.get(`/subjects/${subjectId}/flashcards`);
-                const cards = response.data;
-
-                if (setFlashcardsArray) (setFlashcardsArray(cards))
-                if (subjectId && !setFlashcardsArray) {
-                    return cards
-                }
-
-            } catch (err) {
-                console.log('Erro ao buscar flashcards:', err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchFlashcards()
-    }, [subjectId])
 
     // Ordenar - Revisado para o final
     // useMemo para manter o resultado do sort e não ter que refazer a cada render
@@ -163,8 +140,7 @@ export default function Flashcards() {
         setModal: setIsModalOpen,
         setEdit: setEditingCard,
         setReset_card: setReset_card,
-        reviewCard: handleReview,
-        currentTime: currentTime
+        reviewCard: handleReview
     }
 
 

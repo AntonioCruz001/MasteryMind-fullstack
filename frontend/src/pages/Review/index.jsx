@@ -1,5 +1,7 @@
 import { useState, useMemo } from "react";
-import { useOutletContext } from 'react-router-dom';
+import { useCurrentTime } from "../../hooks/useCurrentTime";
+import { useFlashcards } from "../../hooks/useFlashcards";
+// import { useOutletContext } from 'react-router-dom';
 
 const tabs = [
     { id: 'HOJE', label: 'Hoje' },
@@ -24,7 +26,9 @@ const parseCardDate = (rawDate) => {
 };
 
 export default function Review() {
-    const { flashcards, currentTime } = useOutletContext();
+    const currentTime = useCurrentTime(5000)
+    const { flashcards, setFlashcards, loading } = useFlashcards()
+
     const [activeTab, setActiveTab] = useState('HOJE');
 
     const filteredCards = useMemo(() => {

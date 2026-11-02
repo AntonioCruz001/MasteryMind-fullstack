@@ -1,6 +1,5 @@
-// src/pages/Statistics/index.jsx
 import { useMemo } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { useFlashcards } from '../../hooks/useFlashcards';
 
 const LEVEL_CONFIG = [
   { level: 0, label: 'Nível 0 (Aprendizado)', color: 'bg-gray-100 text-gray-800 border-gray-300' },
@@ -11,7 +10,7 @@ const LEVEL_CONFIG = [
 ];
 
 export default function Statistics() {
-  const { flashcards } = useOutletContext();
+  const { flashcards, setFlashcards, loading } = useFlashcards()
 
   // Mapeia e conta quantos cards existem em cada nível
   const statsByLevel = useMemo(() => {
