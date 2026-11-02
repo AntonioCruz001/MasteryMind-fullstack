@@ -30,3 +30,20 @@ def read_subjects(
     current_user: models.User = Depends(get_current_user)
 ):
     return crud.get_subjects(db=db, skip=skip, limit=limit, user_id=current_user.id)
+
+
+@router.get("/{subject_id}", response_model=SubjectRead)
+def read_subject(
+    subject_id: int,
+    db: Session = Depends(get_db),
+    current_user: models.User = Depends(get_current_user)
+):
+    subject = db.query(models.Subject).filter(
+        models.Subject.id == subject_id,
+        models.Subject.user_id == current_user.id
+    ).first()
+    
+    if not subject:
+        raise HTTPException(status_code=404, detail="Assunto não encontrado.")
+        
+    return subject

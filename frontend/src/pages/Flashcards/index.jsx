@@ -1,12 +1,13 @@
 import { useState, createContext, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { useCurrentTime } from '../../hooks/useCurrentTime'
+import { useFlashcards } from '../../hooks/useFlashcards';
+import { useSubjects } from '../../hooks/useSubjects';
 import FlashcardItem from '../../components/flashcards/FlashcardItem';
 import FlashcardModal from '../../components/flashcards/FlashcardModal';
 import Button from '../../components/ui/Button';
 import api from '../../services/api';
 import backIcon from '../../assets/navigation/back.svg';
-import { useCurrentTime } from '../../hooks/useCurrentTime'
-import { useFlashcards } from '../../hooks/useFlashcards';
 
 export const CardContex = createContext([]);
 
@@ -21,8 +22,10 @@ export default function Flashcards() {
 
     // flashcards e loading vem do custom hook useFlashcards
     // Ao passar o subjectId, retorna os Fc do assunto em questão
-    const { flashcards: flashcardsArray, setFlashcards: setFlashcardsArray, loading } = useFlashcards(subjectId)
-
+    const { flashcards: flashcardsArray, setFlashcards: setFlashcardsArray, loading } = useFlashcards(subjectId);
+    const {subject: subjectAtual, loading: loadingSubjects} = useSubjects(subjectId);
+    console.log({subjectAtual:subjectAtual});
+    
     // state para resetar o card para o level 0 a partir do level 4
     const [reset_card, setReset_card] = useState(false)
 
@@ -160,6 +163,8 @@ export default function Flashcards() {
                 <img className='w-6 h-6 object-contain pointer-events-none' src={backIcon} alt="back" />
             </Link>
 
+            <h3 className='text-brandText font-bold px-2 w-full text-center'> {loadingSubjects ? "" : (subjectAtual?.name || "Assunto não encontrado")} </h3>
+
             <Button onClick={() =>
                 setIsModalOpen(true)}
                 title={"+ Novo Flashcard"}
@@ -177,7 +182,7 @@ export default function Flashcards() {
                 </div>)
                     : sortedFlashcards.length === 0 ? <div>Nenhum Flashcard encontrado!</div> :
                         sortedFlashcards.map((card) => (
-                            // O value expoxto na prop é o card atual de 'sortedFlashcards'
+                            // O valor da a prop é o card atual de 'sortedFlashcards'
                             <FlashcardItem cardItem={card} key={card.id} />
                         ))}
             </div>

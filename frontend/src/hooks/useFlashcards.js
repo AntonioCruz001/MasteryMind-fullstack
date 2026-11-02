@@ -10,7 +10,7 @@ export function useFlashcards(subjectId = null) {
     useEffect(() => {
         const fetchFlashcards = async () => {
             try {
-                console.log('inicio da busca');
+                // console.log('inicio da busca');
                 
 
                 setLoading(true);
@@ -27,7 +27,7 @@ export function useFlashcards(subjectId = null) {
                 setFlashcards([]);
             } finally {
                 setLoading(false);
-                console.log('final da busca, loading false');
+                // console.log('final da busca, loading false');
             }
         }
 

@@ -2,33 +2,17 @@ import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import Button from '../../components/ui/Button'
+import { useSubjects } from '../../hooks/useSubjects';
 
 function Subjects() {
-    const [subjects, setSubjects] = useState([])
+    const { subjects, setSubjects, loading, setLoading } = useSubjects()
     const [name, setName] = useState('')
     const [description, setDescription] = useState('')
-    const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
 
     const [isModalOpen, setIsModalOpen] = useState(false)
 
     const navigate = useNavigate();
-
-    const fetchSubjects = async () => {
-        try {
-            setLoading(true);
-            const response = await api.get('/subjects'); // subject -> subjects
-            setSubjects(response.data);
-        } catch (err) {
-            console.log('Erro ao buscar dados:', err);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchSubjects();
-    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
