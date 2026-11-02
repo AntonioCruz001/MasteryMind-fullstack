@@ -11,7 +11,7 @@ export function useFlashcards(subjectId = null) {
         const fetchFlashcards = async () => {
             try {
                 // console.log('inicio da busca');
-                
+
 
                 setLoading(true);
 
@@ -34,5 +34,5 @@ export function useFlashcards(subjectId = null) {
         fetchFlashcards();
     }, [subjectId]);
 
-    return { flashcards, setFlashcards, loading }
+    return { flashcards, setFlashcards, loading, setLoading }
 }

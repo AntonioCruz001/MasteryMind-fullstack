@@ -92,44 +92,53 @@ export default function Review() {
     const inactiveStyle = "bg-brandNavBg text-brandText hover:bg-brandNavActiveBg";
     const activeStyle = "bg-brandNavActiveBg text-white font-bold shadow-xs";
 
-    return (
-        <div className="w-full">
-            {/* Navegação de Tabs */}
-            <div className="flex  justify-between items-center mb-4 gap-3 w-full overflow-x-auto pb-2">
-                <ul className="flex flex-row gap-1.5">
-                    {tabs.map((tabItem) => {
-                        const isActive = activeTab === tabItem.id;
-                        return (
-                            <li
-                                key={tabItem.id}
-                                onClick={() => setActiveTab(tabItem.id)}
-                                className={`${baseTabStyle} ${isActive ? activeStyle : inactiveStyle}`}
-                            >
-                                {tabItem.label}
-                            </li>
-                        );
-                    })}
-                </ul>
-            </div>
+    return (<div>
+        {loading ? <div className="flex flex-col items-center justify-center py-12 gap-3">
+            <div className="w-8 h-8 border-3 border-brandPrimary border-t-transparent rounded-full animate-spin" />
+            <span className="text-stone-500 text-sm font-medium">Carregando Revisões...</span>
+        </div> :
+            <div className="w-full">
+                {/* Navegação de Tabs */}
+                <div className="flex  justify-between items-center mb-4 gap-3 w-full overflow-x-auto pb-2">
+                    <ul className="flex flex-row gap-1.5">
+                        {tabs.map((tabItem) => {
+                            const isActive = activeTab === tabItem.id;
+                            return (
+                                <li
+                                    key={tabItem.id}
+                                    onClick={() => setActiveTab(tabItem.id)}
+                                    className={`${baseTabStyle} ${isActive ? activeStyle : inactiveStyle}`}
+                                >
+                                    {tabItem.label}
+                                </li>
+                            );
+                        })}
+                    </ul>
+                </div>
 
-            {/* Fila de Flashcards Filtrados */}
-            <div className="flex flex-col gap-3 mt-4">
-                {filteredCards.length === 0 ? (
-                    <div className="text-stone-500 text-center py-8 text-sm">
-                        Nenhum flashcard agendado para este período.
-                    </div>
-                ) : (
-                    filteredCards.map((card) => (
-                        <div key={card.id} className="p-4 bg-brandCard border border-brandBorder rounded-xl shadow-xs">
-                            <div className="flex justify-between text-xs text-stone-500 mb-1">
-                                <span>Level {card.level}</span>
-                                <span>{card.status}</span>
-                            </div>
-                            <p className="font-semibold text-brandText">{card.front}</p>
+                {/* Fila de Flashcards Filtrados */}
+                <div className="flex flex-col gap-3 mt-4">
+                    {filteredCards.length === 0 ? (
+                        <div className="text-stone-500 text-center py-8 text-sm">
+                            Nenhum flashcard agendado para este período.
                         </div>
-                    ))
-                )}
+                    ) : (
+                        filteredCards.map((card) => (
+                            <div key={card.id} className="p-4 bg-brandCard border border-brandBorder rounded-xl shadow-xs">
+                                <div className="flex justify-between text-xs text-stone-500 mb-1">
+                                    <span>Level {card.level}</span>
+                                    <span>{card.status}</span>
+                                </div>
+                                <p className="font-semibold text-brandText">{card.front}</p>
+                            </div>
+                        ))
+                    )}
+                </div>
             </div>
-        </div>
+        }
+
+
+    </div>
+
     );
 }

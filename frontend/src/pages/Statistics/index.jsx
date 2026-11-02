@@ -33,48 +33,56 @@ export default function Statistics() {
   const totalCards = flashcards?.length || 0;
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* Título e Resumo Geral */}
-      <div className="flex justify-between items-center bg-brandCard p-4 rounded-2xl border border-brandBorder shadow-xs">
-        <div>
-          <h2 className="text-xl font-bold text-brandText">Estatísticas</h2>
-          <p className="text-xs text-brandTextMuted">Progresso dos seus flashcards por nível</p>
-        </div>
-        <div className="text-right">
-          <span className="text-2xl font-extrabold text-brandPrimary">{totalCards}</span>
-          <p className="text-xs text-brandTextMuted">Total de Cards</p>
-        </div>
-      </div>
-
-      {/* Grid de Cards por Nível */}
-      <div className="flex flex-col gap-3">
-        {LEVEL_CONFIG.map(({ level, label, color }) => {
-          const count = statsByLevel[level] || 0;
-          const percentage = totalCards > 0 ? Math.round((count / totalCards) * 100) : 0;
-
-          return (
-            <div
-              key={level}
-              className={`p-4 rounded-xl border flex items-center justify-between shadow-2xs transition-all ${color}`}
-            >
-              <div className="flex flex-col gap-1">
-                <span className="text-sm font-semibold">{label}</span>
-                <div className="w-32 bg-black/10 h-1.5 rounded-full overflow-hidden">
-                  <div
-                    className="bg-current h-full rounded-full transition-all duration-500"
-                    style={{ width: `${percentage}%` }}
-                  />
-                </div>
-              </div>
-
-              <div className="text-right">
-                <span className="text-xl font-bold">{count}</span>
-                <span className="text-xs opacity-75 ml-1">({percentage}%)</span>
-              </div>
+    <div >
+      {loading ? <div className="flex flex-col items-center justify-center py-12 gap-3">
+        <div className="w-8 h-8 border-3 border-brandPrimary border-t-transparent rounded-full animate-spin" />
+        <span className="text-stone-500 text-sm font-medium">Carregando Estatísticas...</span>
+      </div> :
+        <div className="flex flex-col gap-6">
+          {/* Título e Resumo Geral */}
+          <div className="flex justify-between items-center bg-brandCard p-4 rounded-2xl border border-brandBorder shadow-xs">
+            <div>
+              <h2 className="text-xl font-bold text-brandText">Estatísticas</h2>
+              <p className="text-xs text-brandTextMuted">Progresso dos seus flashcards por nível</p>
             </div>
-          );
-        })}
-      </div>
-    </div>
+            <div className="text-right">
+              <span className="text-2xl font-extrabold text-brandPrimary">{totalCards}</span>
+              <p className="text-xs text-brandTextMuted">Total de Cards</p>
+            </div>
+          </div>
+
+          {/* Grid de Cards por Nível */}
+          <div className="flex flex-col gap-3">
+            {LEVEL_CONFIG.map(({ level, label, color }) => {
+              const count = statsByLevel[level] || 0;
+              const percentage = totalCards > 0 ? Math.round((count / totalCards) * 100) : 0;
+
+              return (
+                <div
+                  key={level}
+                  className={`p-4 rounded-xl border flex items-center justify-between shadow-2xs transition-all ${color}`}
+                >
+                  <div className="flex flex-col gap-1">
+                    <span className="text-sm font-semibold">{label}</span>
+                    <div className="w-32 bg-black/10 h-1.5 rounded-full overflow-hidden">
+                      <div
+                        className="bg-current h-full rounded-full transition-all duration-500"
+                        style={{ width: `${percentage}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="text-right">
+                    <span className="text-xl font-bold">{count}</span>
+                    <span className="text-xs opacity-75 ml-1">({percentage}%)</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+        </div>
+      }
+    </div >
   );
 }

@@ -24,7 +24,7 @@ export default function Flashcards() {
     // Ao passar o subjectId, retorna os Fc do assunto em questão
     const { flashcards: flashcardsArray, setFlashcards: setFlashcardsArray, loading } = useFlashcards(subjectId);
     const {subject: subjectAtual, loading: loadingSubjects} = useSubjects(subjectId);
-    console.log({subjectAtual:subjectAtual});
+    // console.log({subjectAtual:subjectAtual});
     
     // state para resetar o card para o level 0 a partir do level 4
     const [reset_card, setReset_card] = useState(false)
