@@ -13,6 +13,7 @@ export const cardParaRevisar = (cardData, currentTime, liberarTeste) => {
         ? `${cardData.next_review_date}Z`
         : cardData.next_review_date;
 
-
+    // console.log({cardData:cardData, currentTime:currentTime, liberarTeste:liberarTeste});
+    
     return new Date(dateStr) <= currentTime;
 }

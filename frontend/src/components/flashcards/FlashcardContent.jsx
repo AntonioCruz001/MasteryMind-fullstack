@@ -1,15 +1,12 @@
-import { useState } from "react";
-import { useContext } from "react"
-import { CardContex } from "../../pages/Flashcards"
 import { cardParaRevisar } from '../../functions/IsAvailable';
+import { useCurrentTime } from "../../hooks/useCurrentTime";
 
-export default function FlashcardContent({ fliped, handleClick, ...props }) {
+export default function FlashcardContent({ fliped, handleClick, cardItem, ...props }) {
 
     // Recebendo o card atual do sortedFlashcards.map do Flashcards
-    const cardContext = useContext(CardContex);
-    const card = cardContext[0];
-    const currentTime = cardContext[1]?.currentTime || new Date();
-    // console.log('card obj:', card);
+    const card = cardItem;
+    const currentTime = useCurrentTime()
+
 
     // Bloquear Cards Após Revisar
     const liberarTeste = false;

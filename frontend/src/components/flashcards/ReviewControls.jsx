@@ -1,15 +1,13 @@
-import { useContext } from "react";
-import { CardContex } from "../../pages/Flashcards";
 import { STATUS_COLORS } from "../../constants/statusColors";
 import { formatDate } from "../../functions/fornatDate";
 import { parseTargetDate } from "../../functions/parseTargetDate";
 import ReviewCountdown from "./ReviewCountDown";
+import { useCurrentTime } from "../../hooks/useCurrentTime";
 
 
-export default function ReviewControls() {
-  const cardContext = useContext(CardContex);
-  const card = cardContext?.[0];
-  const currentTime = cardContext?.[1]?.currentTime || new Date();
+export default function ReviewControls({cardItem}) {
+  const card = cardItem;
+  const currentTime = useCurrentTime()
 
   const nextReviewDateObj = parseTargetDate(card?.next_review_date);
 
@@ -35,18 +33,6 @@ export default function ReviewControls() {
         return <ReviewCountdown targetDate={card.next_review_date} defaultMinutes={5} />
       }
     }
-
-    // Se a revisão for hoje
-    // if (card.next_review_date) {
-    //   const reviewDate = nextReviewDateObj;
-    //   const today = new Date();
-
-    // const isToday =
-    //   reviewDate.getDate() === today.getDate() &&
-    //   reviewDate.getMonth() === today.getMonth() &&
-    //   reviewDate.getFullYear() === today.getFullYear();
-
-    // if (isToday) { return <ReviewCountdown targetDate={card.next_review_date} defaultMinutes={5} />; }
 
     // Se a revisão for futura
     const formattedDate = formatDate(card.next_review_date);

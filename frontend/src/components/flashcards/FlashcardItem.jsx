@@ -1,19 +1,18 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import Button from "../ui/Button";
 import FlashcardContent from "./FlashcardContent";
 import ReviewControls from "./ReviewControls";
 import { CardContex } from "../../pages/Flashcards";
 
-export default function FlashcardItem() {
+export default function FlashcardItem({ cardItem }) {
     const [fliped, setFliped] = useState(false);
     const [answered, setAnswered] = useState(false);
-    // const [reviewIndicator, setReviewIndicator] = useState();
-    const [card, func] = useContext(CardContex);
+    const func = useContext(CardContex);
+    
+    const card = cardItem;
     const setEdit = func.setEdit
     const setModal = func.setModal
     const reviewCard = func.reviewCard
-    // const responseCard = func.responseCard
-
 
     function handleFlipClick() {
         { fliped === false ? setFliped(true) : setFliped(false) }
@@ -27,12 +26,12 @@ export default function FlashcardItem() {
             {/* header */}
             <div className="flex flex-row  px-4">
                 {/* <ReviewControls cardPontos={pontos} /> */}
-                <ReviewControls />
+                <ReviewControls cardItem={cardItem} />
                 <Button className="w-6" title={'⚙'} onClick={() => { setEdit(card); setModal(true) }} />
             </div>
 
             {/* frente e verso - conteudo */}
-            <FlashcardContent fliped={fliped} handleClick={handleFlipClick} />
+            <FlashcardContent cardItem={cardItem} fliped={fliped} handleClick={handleFlipClick} />
 
 
             {/* Botoes */}

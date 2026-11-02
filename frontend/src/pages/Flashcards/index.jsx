@@ -1,5 +1,5 @@
-import { useState, useEffect, createContext, useMemo } from 'react';
-import { useParams, Link, useOutletContext } from 'react-router-dom';
+import { useState, createContext, useMemo } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import FlashcardItem from '../../components/flashcards/FlashcardItem';
 import FlashcardModal from '../../components/flashcards/FlashcardModal';
 import Button from '../../components/ui/Button';
@@ -18,7 +18,7 @@ export default function Flashcards() {
     const currentTime = useCurrentTime(5000)                    // currentTime vem de custom hook useCurrentTime
 
     // api.get - Busca dos Cards na API 
-    
+
     // flashcards e loading vem do custom hook useFlashcards
     // Ao passar o subjectId, retorna os Fc do assunto em questão
     const { flashcards: flashcardsArray, setFlashcards: setFlashcardsArray, loading } = useFlashcards(subjectId)
@@ -169,19 +169,19 @@ export default function Flashcards() {
 
         {/* ARRAY DE FLASHCARDS */}
 
-        <div className='flex flex-col gap-3'>
-            {loading ? (<div className="flex flex-col items-center justify-center py-12 gap-3">
-                <div className="w-8 h-8 border-3 border-brandPrimary border-t-transparent rounded-full animate-spin" />
-                <span className="text-stone-500 text-sm font-medium">Carregando flashcards...</span>
-            </div>)
-                : sortedFlashcards.length === 0 ? <div>Nenhum Flashcard encontrado!</div> :
-                    sortedFlashcards.map((card) => (
-                        // O value expoxto na prop é o card atual de 'sortedFlashcards'
-                        <CardContex.Provider key={card.id} value={[card, ctx]}>
-                            <FlashcardItem />
-                        </CardContex.Provider>
-                    ))}
-        </div>
+        <CardContex.Provider value={ctx}>
+            <div className='flex flex-col gap-3'>
+                {loading ? (<div className="flex flex-col items-center justify-center py-12 gap-3">
+                    <div className="w-8 h-8 border-3 border-brandPrimary border-t-transparent rounded-full animate-spin" />
+                    <span className="text-stone-500 text-sm font-medium">Carregando flashcards...</span>
+                </div>)
+                    : sortedFlashcards.length === 0 ? <div>Nenhum Flashcard encontrado!</div> :
+                        sortedFlashcards.map((card) => (
+                            // O value expoxto na prop é o card atual de 'sortedFlashcards'
+                            <FlashcardItem cardItem={card} key={card.id} />
+                        ))}
+            </div>
+        </CardContex.Provider>
 
         {isModalOpen &&
             <div>
