@@ -47,3 +47,17 @@ def read_subject(
         raise HTTPException(status_code=404, detail="Assunto não encontrado.")
         
     return subject
+
+@router.put("/{subject_id}", response_model=SubjectRead)
+def update_subject(subject_id: int, subject_in: SubjectCreate, db: Session = Depends(get_db), current_User: models.User = Depends(get_current_user)):
+    updated = crud.update_subject(db = db, subject_id = subject_id, user_id= current_User.id, subject_in= subject_in)
+    if not updated:
+        raise HTTPException(status_code=404, detail="Assunto não encontrado.")
+    return updated
+
+@router.delete("/{subject_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_subject(subject_id: int, db: Session = Depends(get_db),current_User: models.User = Depends(get_current_user) ):
+    success = crud.delete_subject(db=db, subject_id= subject_id, user_id=current_User.id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Assunto não encontrado.")
+    return None

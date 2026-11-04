@@ -1,38 +1,47 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import Button from '../../components/ui/Button'
 import { useSubjects } from '../../hooks/useSubjects';
+import SubjectModal from '../../components/subjects/SubjectModal';
 
-function Subjects() {
+export default function Subjects() {
     const { subjects, setSubjects, loading, setLoading } = useSubjects()
-    const [name, setName] = useState('')
-    const [description, setDescription] = useState('')
-    const [error, setError] = useState('')
-
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [editingSubject, setEditingSubject] = useState(null);
+
+    const [error, setError] = useState('')
 
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!name.trim()) return;
-
-        setLoading(true);
+    const handleSaveSubject = async (subjectData) => {
         setError('');
-
         try {
-            await api.post('/subjects/', { name, description });
-            setName('');
-            setDescription('');
+            if (editingSubject) {
+                const response = await api.put(`/subjects/${editingSubject.id}`, subjectData);
+                setSubjects(prev => prev.map(s => s.id == editingSubject.id ? response.data : s));
+            } else {
+                const response = await api.post('/subjects/', subjectData);
+                setSubjects(prev => [...prev, response.data]);
+            }
+
             setIsModalOpen(false);
-            fetchSubjects();
-        } catch (err) {
-            setError(err.response?.data?.detail || 'Erro ao cadastrar assunto.');
-        } finally {
-            setLoading(false);
+            setEditingSubject(null);
+        } catch (error) {
+            setError(err.response?.data?.detail || 'Erro ao salvar categoria.');
         }
-    };
+    }
+
+    const handleDeleteSubject = async (subjectId) => {
+        try {
+            await api.delete(`/subjects/${subjectId}`);
+            setSubjects(prev => prev.filter(s => s.id != subjectId));
+            setIsModalOpen(false);
+            setEditingSubject(null);
+        } catch (error) {
+            console.error('Erro ao excluir assunto:', err);
+        }
+    }
 
     const baseInput = "w-full border rounded-lg border-gray-300 p-2.5 text-sm bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-brandPrimary/20 focus:border-brandPrimary transition-all"
 
@@ -43,12 +52,18 @@ function Subjects() {
             <div className="flex justify-between items-center mt-2">
                 <h2 className="text-2xl font-bold text-brandText">Categorias</h2>
                 <Button
-                    onClick={() => setIsModalOpen(true)}
+                    onClick={() => { setEditingSubject(null); setIsModalOpen(true) }}
                     title={"+ Nova Categoria"}
                     btnType={'criar'}
                 // className="bg-brandPrimary hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition-all text-sm cursor-pointer"
                 />
             </div>
+
+            {error && (
+                <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm font-medium">
+                    {error}
+                </div>
+            )}
 
             {/* Lista de Categorias (Cards Clicáveis) */}
             <div className="flex flex-col gap-3">
@@ -72,9 +87,12 @@ function Subjects() {
                                         <span className="font-bold text-lg text-brandText group-hover:text-brandPrimary transition-colors">
                                             {subject.name}
                                         </span>
-                                        <span className="text-brandPrimary opacity-0 group-hover:opacity-100 transition-opacity">
+
+                                        <Button className="w-6" title={'⚙'} onClick={(e) => (setEditingSubject(subject), setIsModalOpen(true), e.stopPropagation())} />
+
+                                        {/* <span className="text-brandPrimary opacity-0 group-hover:opacity-100 transition-opacity">
                                             ➔
-                                        </span>
+                                        </span> */}
                                     </div>
                                     {subject.description && (
                                         <span className="text-sm text-gray-500 line-clamp-2">{subject.description}</span>
@@ -86,68 +104,15 @@ function Subjects() {
             </div>
 
             {/* Modal de Cadastro (Popup) */}
-            {isModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
-                    <div className="bg-brandCard p-6 rounded-2xl shadow-xl w-full max-w-md border border-gray-100 relative">
-
-                        {/* Botão de Fechar o Modal */}
-                        <button
-                            onClick={() => setIsModalOpen(false)}
-                            className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 font-bold"
-                        >
-                            ✕
-                        </button>
-
-                        <h2 className="text-xl font-bold text-brandText mb-4">Nova Categoria</h2>
-
-                        {error && (
-                            <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm font-medium">
-                                {error}
-                            </div>
-                        )}
-
-                        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                            <div>
-                                <input
-                                    type="text"
-                                    placeholder="Nome da categoria (ex: Informática, Inglês...)"
-                                    className={baseInput}
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    required
-                                />
-                            </div>
-
-                            <div>
-                                <textarea
-                                    placeholder="Descrição (opcional)"
-                                    className={`${baseInput} resize-none h-24`}
-                                    value={description}
-                                    onChange={(e) => setDescription(e.target.value)}
-                                />
-                            </div>
-
-                            <div className="flex gap-3 mt-2">
-                                <Button
-                                    type="button"
-                                    onClick={() => setIsModalOpen(false)}
-                                    title={"Cancelar"}
-                                    className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2.5 rounded-lg transition-all text-sm cursor-pointer"
-                                />
-                                <Button
-                                    type="submit"
-                                    disabled={loading}
-                                    title={loading ? 'Criando...' : 'Criar Categoria'}
-                                    className="flex-1 bg-brandPrimary hover:bg-teal-700 text-white font-bold py-2.5 rounded-lg shadow-sm transition-all text-sm cursor-pointer disabled:opacity-50"
-                                />
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
+            <SubjectModal
+                isOpen={isModalOpen}
+                initialData={editingSubject}
+                onSubmit={handleSaveSubject}
+                onDelete={handleDeleteSubject}
+                onClose={() => { setIsModalOpen(false); setEditingSubject(null); }}
+            />
 
         </div>
     )
-}
+};
 
-export default Subjects
