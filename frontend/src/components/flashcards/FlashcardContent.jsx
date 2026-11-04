@@ -13,11 +13,17 @@ export default function FlashcardContent({ fliped, handleClick, cardItem, ...pro
     const available = cardParaRevisar(card, currentTime, liberarTeste);
 
     const getCardStyle = () => {
-        if (available) { return 'bg-amber-100 cursor-pointer hover:scale-[1.01]'; }
+        if (available) {
+            if (!fliped) {
+                return 'bg-amber-100 cursor-pointer hover:scale-[1.01]';
+            } else if (fliped) {
+                return 'bg-cyan-200 cursor-pointer hover:scale-[1.01]';
+            }
+        }
 
         if (card.status === "MASTERED") { return 'bg-brandSuccess text-white opacity-90 cursor-not-allowed'; }
 
-        return 'bg-stone-200  opacity-60 cursor-not-allowed';
+        return 'bg-stone-200  opacity-60 cursor-not-allowed'; // bg-stone-200
     }
 
     // Estilizar a partir do resultado do review
@@ -40,12 +46,12 @@ export default function FlashcardContent({ fliped, handleClick, cardItem, ...pro
             </span>
         )}
 
-        {!fliped ? <div className="text-center whitespace-pre-wrap">
+        {!fliped ? <div className="text-center  whitespace-pre-wrap">
             {card.front}
             {/* {console.log('exibindo front')} */}
 
         </div> :
-            <div className="text-center whitespace-pre-wrap">
+            <div className="text-center  whitespace-pre-wrap">
                 {card.back}
                 {/* {console.log('exibindo back')} */}
             </div>
