@@ -112,24 +112,22 @@ export default function CardTestList() {
         <div className="flex flex-col gap-4 max-w-md mx-auto">
             {/* Header do Teste */}
             <div className="flex justify-between items-center bg-brandCard p-3 rounded-xl border border-brandBorder text-xs text-brandTextMuted">
-                <button onClick={() => navigate('/home/tests')} className='flex items-center justify-center
-              gap-2 px-8 sm:px-4 py-2.5 
-              bg-brandCard border border-brandBorder shadow-xs rounded-xl 
-              text-brandText fontmedium text-sm
-              hover:bg-[#d4dddf] active:scale-95 transition-all shrink-0 select-none
-              '>
-                    <img src={backIcon} alt="voltar" className='w-6 h-6 object-contain pointer-events-none' /> Sair
-
-
-                </button>
-                <div className='flex items-center justify-center
-              gap-2 px-8 sm:px-4 py-2.5'>
-                    <span className="font-semibold">{groupName}</span>
+                <div className="w-32 flex justify-start shrink-0">
+                    <button onClick={() => navigate('/home/tests')} className='flex items-center justify-center
+          gap-1.5 px-3 py-1.5 
+          bg-brandCard border border-brandBorder shadow-xs rounded-xl 
+          text-brandText font-medium text-xs sm:text-sm
+          hover:bg-[#d4dddf] active:scale-95 transition-all select-none'>
+                        <img src={backIcon} alt="voltar" className='w-6 h-6 object-contain pointer-events-none' />
+                    </button>
                 </div>
 
-                <div className='flex items-center justify-center
-              gap-2 px-8 sm:px-4 py-2.5'>
-                    <span>{currentIndex + 1} de {cards.length}</span>
+                <div className='flex items-center justify-center flex-1 min-w-0 px-2'>
+                    <span className="font-semibold text-brandText text-sm sm:text-base  text-center whitespace-normal break-words">{groupName}</span>
+                </div>
+
+                <div className='w-32 flex items-center justify-end shrink-0 text-right'>
+                    <span className="text-brandText font-medium text-xs sm:text-sm">{currentIndex + 1} de {cards.length}</span>
                 </div>
             </div>
 

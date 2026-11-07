@@ -90,9 +90,6 @@ export default function Subjects() {
 
                                         <Button className="w-6" title={'⚙'} onClick={(e) => (setEditingSubject(subject), setIsModalOpen(true), e.stopPropagation())} />
 
-                                        {/* <span className="text-brandPrimary opacity-0 group-hover:opacity-100 transition-opacity">
-                                            ➔
-                                        </span> */}
                                     </div>
                                     {subject.description && (
                                         <span className="text-sm text-gray-500 line-clamp-2">{subject.description}</span>

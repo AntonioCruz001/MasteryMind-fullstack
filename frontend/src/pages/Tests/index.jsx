@@ -117,15 +117,17 @@ export default function TestGroups() {
                         <div
                             key={grupo.id}
                             onClick={() => navigate(`/home/CardTest/${grupo.id}/CardTestList`)}
-                            className='bg-brandCard p-4 rounded-xl border border-brandBorder shadow-xs flex justify-between items-center cursor-pointer hover:border-brandPrimary hover:shadow-md transition-all group'
+                            className='bg-brandCard p-5 rounded-xl border border-brandBorder shadow-sm  flex justify-center items-center cursor-pointer hover:border-brandPrimary hover:shadow-md transition-all group'
                         >
-                            <span className='font-semibold text-brandText group-hover:text-brandPrimary transition-colors'>
-                                {grupo.name}
-                            </span>
-                            <span className='text-xs text-brandTextMuted'>
-                                {grupo.flashcard_ids.length} cards
-                            </span>
-                            <Button className="w-8" title={'⚙'} onClick={(e) => (setIsModalOpen(true), e.stopPropagation(), setEditing(true), setEditingGroup(grupo))} />
+                            <div className='content w-full flex flex-row justify-around items-center gap-2'>
+                                <span className='font-semibold text-brandText group-hover:text-brandPrimary transition-colors'>
+                                    {grupo.name}
+                                </span>
+                                <span className='min-w-10  text-xs text-brandTextMuted'>
+                                    {grupo.flashcard_ids.length} cards
+                                </span>
+                                <Button className="w-8" title={'⚙'} onClick={(e) => (setIsModalOpen(true), e.stopPropagation(), setEditing(true), setEditingGroup(grupo))} />
+                            </div>
                         </div>
                     ))
                 )}
