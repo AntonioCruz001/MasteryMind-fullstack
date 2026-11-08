@@ -1,22 +1,41 @@
 // src/pages/TestGroups/index.jsx
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createPortal } from 'react-dom';
 import Button from '../../components/ui/Button';
 import api from '../../services/api';
 import GroupModal from '../../components/tests/GroupModal';
+import ResultsModal from '../../components/tests/ResultsModal';
+
+// Mock temporário para os resultados
+const MOCK_RESULTS = {
+    1: [ // ID do grupo 1 (substitua pelos IDs reais dos seus grupos se forem diferentes)
+        { id: 1, created_at: '2026-11-08T10:30:00', correct_count: 8, total_cards: 10, score_percentage: 80.0 },
+        { id: 2, created_at: '2026-11-07T15:20:00', correct_count: 6, total_cards: 10, score_percentage: 60.0 },
+        { id: 2, created_at: '2026-11-07T15:20:00', correct_count: 7, total_cards: 10, score_percentage: 70.0 },
+        { id: 2, created_at: '2026-11-07T15:20:00', correct_count: 9, total_cards: 10, score_percentage: 90.0 },
+        { id: 2, created_at: '2026-11-07T15:20:00', correct_count: 10, total_cards: 10, score_percentage: 100.0 }
+    ],
+    2: [ // ID do grupo 2
+        { id: 3, created_at: '2026-11-06T09:10:00', correct_count: 5, total_cards: 5, score_percentage: 100.0 }
+    ]
+};
 
 export default function TestGroups() {
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isResultsOpen, setIsResultsOpen] = useState(false);
 
     const [groups, setGroups] = useState([]);
-    const [allCards, setAllCards] = useState([]); //
-    const [groupName, setGroupName] = useState(''); // 
-    const [selectedCards, setSelectedCards] = useState([]); //
+    const [allCards, setAllCards] = useState([]);
+    const [groupName, setGroupName] = useState('');
+    const [selectedCards, setSelectedCards] = useState([]);
     const [loading, setLoading] = useState(false);
     const [editing, setEditing] = useState(false);
-    const [editingGroup, setEditingGroup] = useState('')
+    const [editingGroup, setEditingGroup] = useState(null);
+
+    // Estados para o Modal de Resultados (Mockup)
+    const [selectedGroupResults, setSelectedGroupResults] = useState([]);
+    const [loadingResults, setLoadingResults] = useState(false);
 
     // Buscar Grupos e Cards do Servidor em paralelo
     useEffect(() => {
@@ -38,24 +57,37 @@ export default function TestGroups() {
         fetchData();
     }, []);
 
+    // Função para abrir o modal de resultados e simular o carregamento (Mock)
+    const handleOpenResults = (group, e) => {
+        e.stopPropagation();
+        console.log("=== [MOCK DEBUG] ID do grupo clicado:", group.id);
+        setEditingGroup(group);
+        setIsResultsOpen(true);
+        setLoadingResults(true);
+
+        setTimeout(() => {
+            // Se o ID existir no mock, usa ele; senão, usa os dados do grupo 1 como padrão para o mockup aparecer!
+            const resultadosDoGrupo = MOCK_RESULTS[group.id] || MOCK_RESULTS[1];
+            setSelectedGroupResults(resultadosDoGrupo);
+            setLoadingResults(false);
+        }, 300);
+    };
+
     const handleSaveGroup = async (e) => {
         e.preventDefault();
         if (!groupName.trim() || selectedCards.length === 0) return;
 
         try {
             if (editing && editingGroup) {
-                // Atualiza o grupo existente (PUT)
                 const response = await api.put(`/test-groups/${editingGroup.id}`, {
                     name: groupName,
                     flashcard_ids: selectedCards
                 });
 
-                console.log("=== [FRONTEND LOG] Resposta do PUT:", response.data);
                 setGroups(prev =>
                     prev.map(group => group.id === editingGroup.id ? response.data : group)
                 );
             } else {
-                // Cria um novo grupo (POST)
                 const response = await api.post('/test-groups', {
                     name: groupName,
                     flashcard_ids: selectedCards
@@ -64,7 +96,6 @@ export default function TestGroups() {
                 setGroups(prev => [...prev, response.data]);
             }
 
-            // Limpa os estados e fecha o modal
             setGroupName('');
             setSelectedCards([]);
             setIsModalOpen(false);
@@ -101,7 +132,13 @@ export default function TestGroups() {
                 <Button
                     title={"+ Novo Grupo"}
                     btnType={'criar'}
-                    onClick={() => setIsModalOpen(true)}
+                    onClick={() => {
+                        setEditing(false);
+                        setEditingGroup(null);
+                        setGroupName('');
+                        setSelectedCards([]);
+                        setIsModalOpen(true);
+                    }}
                 />
             </div>
 
@@ -117,32 +154,57 @@ export default function TestGroups() {
                         <div
                             key={grupo.id}
                             onClick={() => navigate(`/home/CardTest/${grupo.id}/CardTestList`)}
-                            className='bg-brandCard p-5 rounded-xl border border-brandBorder shadow-sm  flex justify-center items-center cursor-pointer hover:border-brandPrimary hover:shadow-md transition-all group'
+                            className='bg-brandCard p-5 rounded-xl border border-brandBorder shadow-sm flex justify-center items-center cursor-pointer hover:border-brandPrimary hover:shadow-md transition-all group'
                         >
-                            <div className='content w-full flex flex-row justify-around items-center gap-2'>
+                            <div className='content w-full flex flex-row justify-between items-center gap-2'>
                                 <span className='font-semibold text-brandText group-hover:text-brandPrimary transition-colors'>
                                     {grupo.name}
                                 </span>
-                                <span className='min-w-10  text-xs text-brandTextMuted'>
-                                    {grupo.flashcard_ids.length} cards
-                                </span>
-                                <Button className="w-8 flex justify-center" btnType='gear' onClick={(e) => (setIsModalOpen(true), e.stopPropagation(), setEditing(true), setEditingGroup(grupo))} />
+                                <div className='flex flex-row items-center gap-3'>
+                                    <span className='min-w-10 text-xs text-brandTextMuted'>
+                                        {grupo.flashcard_ids.length} cards
+                                    </span>
+                                    <Button
+                                        className="w-5 flex justify-center items-center bg-green-300 rounded-sm hover:bg-green-400 cursor-pointer"
+                                        title="%"
+                                        onClick={(e) => handleOpenResults(grupo, e)}
+                                    />
+                                    <Button
+                                        className="w-8 flex justify-center cursor-pointer"
+                                        btnType='gear'
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setEditing(true);
+                                            setEditingGroup(grupo);
+                                            setIsModalOpen(true);
+                                        }}
+                                    />
+                                </div>
                             </div>
                         </div>
                     ))
                 )}
             </div>
 
+            {/* Modal de lista de resultados anteriores (Mockup) */}
+            {isResultsOpen && (
+                <ResultsModal
+                    isOpen={isResultsOpen}
+                    onClose={() => setIsResultsOpen(false)}
+                    group={editingGroup}
+                    results={selectedGroupResults}
+                    loading={loadingResults}
+                />
+            )}
 
-            {/* Modal de Criação */}
-            {isModalOpen
-                &&
+            {/* Modal de Criação / Edição */}
+            {isModalOpen && (
                 <GroupModal
                     initialData={editingGroup}
                     editing={editing}
                     setEditing={setEditing}
                     handleSaveGroup={handleSaveGroup}
-                    setIsModalOpen={setIsModalOpen}
+                    onClose={() => setIsModalOpen(false)}
                     allCards={allCards}
                     setAllCards={setAllCards}
                     selectedCards={selectedCards}
@@ -150,7 +212,8 @@ export default function TestGroups() {
                     groupName={groupName}
                     setGroupName={setGroupName}
                     onDelete={handleDeleteGroup}
-                />}
+                />
+            )}
         </div>
     );
 }

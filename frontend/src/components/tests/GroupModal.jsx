@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Button from "../ui/Button";
 import { createPortal } from "react-dom";
 
-export default function GroupModal({ editing, setEditing, allCards, setAllCards, selectedCards, setSelectedCards, groupName, setGroupName, handleSaveGroup, initialData = null, setIsModalOpen, onDelete, ...props }) {
+export default function GroupModal({ editing, setEditing, allCards, setAllCards, selectedCards, setSelectedCards, groupName, setGroupName, handleSaveGroup, initialData = null, onClose, onDelete, ...props }) {
 
 
     useEffect(() => {
@@ -27,7 +27,7 @@ export default function GroupModal({ editing, setEditing, allCards, setAllCards,
                 <div className='flex justify-between items-center pb-2 border-b border-gray-100'>
                     {editing ? (<h3 className='text-lg font-bold text-brandText'>Editar Grupo de Teste</h3>)
                         : (<h3 className='text-lg font-bold text-brandText'>Criar Novo Grupo de Teste</h3>)}
-                    <button onClick={() => setIsModalOpen(false)} className='text-gray-400 hover:text-gray-700 font-bold cursor-pointer'>✕</button>
+                    <button type="button" onClick={() => { setEditing(false); onClose() }} className='text-gray-400 hover:text-gray-700 font-bold cursor-pointer'>✕</button>
                 </div>
 
                 <form onSubmit={handleSaveGroup} className='flex flex-col gap-4 overflow-hidden'>
@@ -73,7 +73,7 @@ export default function GroupModal({ editing, setEditing, allCards, setAllCards,
                     </div>
 
                     <div className='flex justify-end gap-2 pt-2 border-t border-gray-100'>
-                        <Button type='button' title={'Cancelar'} className='bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-4 rounded-lg text-sm font-bold' onClick={() => { setEditing(false), setIsModalOpen(false) }} />
+                        <Button type='button' title={'Cancelar'} className='bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-4 rounded-lg text-sm font-bold' onClick={() => { setEditing(false), onClose() }} />
                         {editing && initialData && onDelete && (
                             <Button type='button' btnType='excluir' title={'Excluir'} onClick={() => onDelete(initialData.id)} />
                         )}

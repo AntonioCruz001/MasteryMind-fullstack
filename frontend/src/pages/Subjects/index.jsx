@@ -82,7 +82,7 @@ export default function Subjects() {
                                 <div
                                     key={subject.id}
                                     onClick={() => navigate(`/home/subjects/${subject.id}/flashcards`)}
-                                    className="bg-brandCard p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-1 cursor-pointer hover:shadow-md hover:border-brandPrimary transition-all group"
+                                    className="flex flex-col gap-1 bg-brandCard p-5 rounded-2xl shadow-sm border border-gray-100  cursor-pointer hover:shadow-md hover:border-brandPrimary transition-all group"
                                 >
                                     <div className="flex justify-between items-center">
                                         <span className="font-bold text-lg text-brandText group-hover:text-brandPrimary transition-colors">
@@ -90,6 +90,7 @@ export default function Subjects() {
                                         </span>
 
                                         <Button btnType="gear" className="w-6 flex justify-center items-center" onClick={(e) => (setEditingSubject(subject), setIsModalOpen(true), e.stopPropagation())} />
+
 
                                     </div>
                                     {subject.description && (
