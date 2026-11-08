@@ -1,14 +1,15 @@
 import { useContext, useState } from "react";
+import { CardContex } from "../../pages/Flashcards";
 import Button from "../ui/Button";
 import FlashcardContent from "./FlashcardContent";
 import ReviewControls from "./ReviewControls";
-import { CardContex } from "../../pages/Flashcards";
+import edit_gear from '../../assets/edit/edit_gear.svg';
 
 export default function FlashcardItem({ cardItem }) {
     const [fliped, setFliped] = useState(false);
     const [answered, setAnswered] = useState(false);
     const func = useContext(CardContex);
-    
+
     const card = cardItem;
     const setEdit = func.setEdit
     const setModal = func.setModal
@@ -27,7 +28,7 @@ export default function FlashcardItem({ cardItem }) {
             <div className="flex flex-row  px-4">
                 {/* <ReviewControls cardPontos={pontos} /> */}
                 <ReviewControls cardItem={cardItem} />
-                <Button className="w-6" title={'⚙'} onClick={() => { setEdit(card); setModal(true) }} />
+                <Button btnType="gear" className="w-6 flex justify-center items-center" onClick={() => { setEdit(card); setModal(true) }} />
             </div>
 
             {/* frente e verso - conteudo */}

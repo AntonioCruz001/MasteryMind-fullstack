@@ -126,7 +126,7 @@ export default function TestGroups() {
                                 <span className='min-w-10  text-xs text-brandTextMuted'>
                                     {grupo.flashcard_ids.length} cards
                                 </span>
-                                <Button className="w-8" title={'⚙'} onClick={(e) => (setIsModalOpen(true), e.stopPropagation(), setEditing(true), setEditingGroup(grupo))} />
+                                <Button className="w-8 flex justify-center" btnType='gear' onClick={(e) => (setIsModalOpen(true), e.stopPropagation(), setEditing(true), setEditingGroup(grupo))} />
                             </div>
                         </div>
                     ))

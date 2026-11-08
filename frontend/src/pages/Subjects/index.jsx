@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
+import { useSubjects } from '../../hooks/useSubjects';
 import api from '../../services/api';
 import Button from '../../components/ui/Button'
-import { useSubjects } from '../../hooks/useSubjects';
 import SubjectModal from '../../components/subjects/SubjectModal';
+import edit_gear from '../../assets/edit/edit_gear.svg';
 
 export default function Subjects() {
     const { subjects, setSubjects, loading, setLoading } = useSubjects()
@@ -88,7 +89,7 @@ export default function Subjects() {
                                             {subject.name}
                                         </span>
 
-                                        <Button className="w-6" title={'⚙'} onClick={(e) => (setEditingSubject(subject), setIsModalOpen(true), e.stopPropagation())} />
+                                        <Button btnType="gear" className="w-6 flex justify-center items-center" onClick={(e) => (setEditingSubject(subject), setIsModalOpen(true), e.stopPropagation())} />
 
                                     </div>
                                     {subject.description && (
