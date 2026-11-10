@@ -5,7 +5,7 @@ from fastapi.security import OAuth2PasswordBearer
 from app.database import engine, Base
 from app.routers import subjects,users, auth, flashcards, global_flashcards
 from app import models
-from app.routers import subjects, users, auth, flashcards, global_flashcards, test_group
+from app.routers import subjects, users, auth, flashcards, global_flashcards, test_group, test_result
 
 __all__ = ["auth_router", "users_router", "subjects_router"]
   
@@ -40,6 +40,7 @@ app.include_router(subjects.router)
 app.include_router(flashcards.router)
 app.include_router(global_flashcards.router)
 app.include_router(test_group.router)
+app.include_router(test_result.router)
 
 @app.get("/")
 def health_check():

@@ -7,18 +7,18 @@ import GroupModal from '../../components/tests/GroupModal';
 import ResultsModal from '../../components/tests/ResultsModal';
 
 // Mock temporário para os resultados
-const MOCK_RESULTS = {
-    1: [ // ID do grupo 1 (substitua pelos IDs reais dos seus grupos se forem diferentes)
-        { id: 1, created_at: '2026-11-08T10:30:00', correct_count: 8, total_cards: 10, score_percentage: 80.0 },
-        { id: 2, created_at: '2026-11-07T15:20:00', correct_count: 6, total_cards: 10, score_percentage: 60.0 },
-        { id: 2, created_at: '2026-11-07T15:20:00', correct_count: 7, total_cards: 10, score_percentage: 70.0 },
-        { id: 2, created_at: '2026-11-07T15:20:00', correct_count: 9, total_cards: 10, score_percentage: 90.0 },
-        { id: 2, created_at: '2026-11-07T15:20:00', correct_count: 10, total_cards: 10, score_percentage: 100.0 }
-    ],
-    2: [ // ID do grupo 2
-        { id: 3, created_at: '2026-11-06T09:10:00', correct_count: 5, total_cards: 5, score_percentage: 100.0 }
-    ]
-};
+// const MOCK_RESULTS = {
+//     1: [ // ID do grupo 1 (substitua pelos IDs reais dos seus grupos se forem diferentes)
+//         { id: 1, created_at: '2026-11-08T10:30:00', correct_count: 8, total_cards: 10, score_percentage: 80.0 },
+//         { id: 2, created_at: '2026-11-07T15:20:00', correct_count: 6, total_cards: 10, score_percentage: 60.0 },
+//         { id: 2, created_at: '2026-11-07T15:20:00', correct_count: 7, total_cards: 10, score_percentage: 70.0 },
+//         { id: 2, created_at: '2026-11-07T15:20:00', correct_count: 9, total_cards: 10, score_percentage: 90.0 },
+//         { id: 2, created_at: '2026-11-07T15:20:00', correct_count: 10, total_cards: 10, score_percentage: 100.0 }
+//     ],
+//     2: [ // ID do grupo 2
+//         { id: 3, created_at: '2026-11-06T09:10:00', correct_count: 5, total_cards: 5, score_percentage: 100.0 }
+//     ]
+// };
 
 export default function TestGroups() {
     const navigate = useNavigate();
@@ -58,19 +58,22 @@ export default function TestGroups() {
     }, []);
 
     // Função para abrir o modal de resultados e simular o carregamento (Mock)
-    const handleOpenResults = (group, e) => {
+    // Substitua o handleOpenResults em Tests/index.jsx:
+    const handleOpenResults = async (group, e) => {
         e.stopPropagation();
-        console.log("=== [MOCK DEBUG] ID do grupo clicado:", group.id);
         setEditingGroup(group);
         setIsResultsOpen(true);
         setLoadingResults(true);
 
-        setTimeout(() => {
-            // Se o ID existir no mock, usa ele; senão, usa os dados do grupo 1 como padrão para o mockup aparecer!
-            const resultadosDoGrupo = MOCK_RESULTS[group.id] || MOCK_RESULTS[1];
-            setSelectedGroupResults(resultadosDoGrupo);
+        try {
+            const response = await api.get(`/test-groups/${group.id}/results`);
+            setSelectedGroupResults(response.data);
+        } catch (err) {
+            console.error('Erro ao carregar histórico de resultados:', err);
+            setSelectedGroupResults([]);
+        } finally {
             setLoadingResults(false);
-        }, 300);
+        }
     };
 
     const handleSaveGroup = async (e) => {

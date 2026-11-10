@@ -1,5 +1,6 @@
 // src/components/tests/ResultsModal.jsx
 import { createPortal } from 'react-dom';
+import { getScoreColorStyle } from '../../functions/getScoreColorStyle';
 
 export default function ResultsModal({ isOpen, onClose, group, results, loading }) {
     if (!isOpen) return null;
@@ -13,7 +14,7 @@ export default function ResultsModal({ isOpen, onClose, group, results, loading 
                     <div>
                         <h3 className='text-lg font-bold text-brandText'>Histórico de Resultados</h3>
                         <p className='text-xs text-brandTextMuted truncate max-w-[260px]'>
-                            {`${group?.name} (Mockup)` || 'Grupo de Teste'}
+                            {`${group?.name} ` || 'Grupo de Teste'}
                         </p>
                     </div>
                     <button 
@@ -54,7 +55,7 @@ export default function ResultsModal({ isOpen, onClose, group, results, loading 
                                     </span>
                                 </div>
                                 <div className="text-right">
-                                    <span className="text-base font-bold text-brandPrimary bg-brandPrimary/10 px-2.5 py-1 rounded-lg">
+                                    <span className={ `text-base font-bold px-2.5 py-1 rounded-lg inline-block ${getScoreColorStyle(res.score_percentage)}` }>
                                         {res.score_percentage.toFixed(1)}%
                                     </span>
                                 </div>

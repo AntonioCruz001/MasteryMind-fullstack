@@ -4,8 +4,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database import Base
 
 
-
-
 # Tabela associativa muitos-para-muitos entre Grupos de Teste e Flashcards
 test_group_flashcards = Table(
     "test_group_flashcards",
@@ -24,3 +22,6 @@ class TestGroup(Base):
 
     user = relationship("User")
     flashcards = relationship("Flashcard", secondary=test_group_flashcards)
+
+    results = relationship("TestResult", back_populates='test_group', cascade="all, delete-orphan")
+

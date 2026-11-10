@@ -19,6 +19,27 @@ export default function CardTestList() {
     const [results, setResults] = useState({ acertos: 0, erros: 0 });
     const [isFinished, setIsFinished] = useState(false);
 
+    // 
+    useEffect(() => {
+        const saveResults = async () => {
+            if (isFinished && cards.length > 0) {
+                try {
+                    const total = cards.length;
+                    const pctAcerto = (results.acertos / total) * 100;
+
+                    await api.post(`/test-groups/${grupoId}/results`, {
+                        correct_count: results.acertos,
+                        total_cards: total,
+                        score_percentage: pctAcerto
+                    });
+                } catch (err) {
+                    console.error("Erro ao salvar resultado do simulado:", err);
+                }
+            }
+        };
+        saveResults();
+    }, [isFinished]);
+
     useEffect(() => {
         const fetchTestGroupDetails = async () => {
             try {

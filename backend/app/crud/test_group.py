@@ -44,3 +44,6 @@ def delete_test_group(db: Session, group_id: int, user_id: int) -> bool:
         db.commit()
         return True
     return False
+
+def get_test_group_by_id(db: Session, group_id: int, user_id: int) -> TestGroup | None:
+    return db.query(TestGroup).filter(TestGroup.id == group_id, TestGroup.user_id == user_id).first()
