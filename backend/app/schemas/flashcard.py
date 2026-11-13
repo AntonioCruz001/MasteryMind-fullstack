@@ -25,6 +25,7 @@ class FlashcardRead(FlashcardBase):
     next_review_date: Optional[datetime] = None
     last_reviewed_at: Optional[datetime] = None
     last_result: Optional[str] = None
+    subject: Optional[SubjectOut] = None
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -40,3 +41,16 @@ class FlashcardReset(BaseModel):
     last_result: Optional[str] = None
     last_reviewed_at: Optional[datetime] = None
 
+class SubjectOut(BaseModel):
+    id: int
+    name: str
+
+
+
+# class FlashcardOut(BaseModel):
+#     id: int
+#     front: str
+#     back: str
+#     subject_id: Optional[int]
+#     subject: Optional[SubjectOut] = None # <--- Isso faz o FastAPI mandar o objeto junto!
+#     # ... outros campos

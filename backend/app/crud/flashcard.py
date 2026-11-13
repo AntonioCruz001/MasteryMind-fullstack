@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta, timezone
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from app.models.flashcard import Flashcard
 from app.models.tags import Tag
 from app.schemas.flashcard  import FlashcardCreate, FlashcardUpdate, FlashcardReset
@@ -26,6 +26,7 @@ def get_all_flashcards_by_user(db: Session, user_id: int) -> list[models.Flashca
         db.query(models.Flashcard)
         .join(models.Subject, models.Flashcard.subject_id == models.Subject.id)
         .filter(models.Subject.user_id == user_id)
+        .options(joinedload(models.Flashcard.subject))
         .all()
     )
 
