@@ -26,9 +26,12 @@ const parseCardDate = (rawDate) => {
 
 export default function Review() {
     const currentTime = useCurrentTime(5000);
+
     const { flashcards, loading } = useFlashcards();
 
     const [activeTab, setActiveTab] = useState('HOJE');
+
+    const [expandedSubjects, setExpandedSubjects] = useState({});
 
     // 1. Filtra os cards baseado na aba ativa (seu código original de filtro)
     const filteredCards = useMemo(() => {
@@ -103,6 +106,13 @@ export default function Review() {
         return Object.values(groups);
     }, [filteredCards]);
 
+    const toggleSubject = (subjectId) => {
+        setExpandedSubjects(prev => ({
+            ...prev,
+            [subjectId]: !prev[subjectId]
+        }));
+    };
+
     const baseTabStyle = "px-3 py-1.5 rounded-sm text-xs font-medium transition-all cursor-pointer select-none";
     const inactiveStyle = "bg-brandNavBg text-brandText hover:bg-brandNavActiveBg";
     const activeStyle = "bg-brandNavActiveBg text-white font-bold shadow-xs";
@@ -141,29 +151,54 @@ export default function Review() {
                                 Nenhum flashcard agendado para este período.
                             </div>
                         ) : (
-                            cardsBySubject.map((group) => (
-                                <div key={group.subjectId} className="flex flex-col gap-3">
+                            cardsBySubject.map((group) => {
+                                // expandedSubjects guarda true ou false para os grupos
+                                const isExpanded = expandedSubjects[group.subjectId] || false
+
+                                return <div key={group.subjectId} className="flex flex-col gap-3">
                                     {/* Cabeçalho do Assunto */}
-                                    <div className="flex justify-between items-center px-1 border-b border-brandBorder pb-1.5">
-                                        <h3 className="font-bold text-sm text-brandText">
-                                            {group.subjectName}
-                                        </h3>
+                                    <div
+                                        onClick={() => toggleSubject(group.subjectId)}
+                                        // hover:opacity-80
+                                        className="flex justify-between items-center px-1 cursor-pointer select-none py-1  hover:opacity-80 transition-opacity"
+                                    >
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-xs text-brandTextMuted font-bold">
+                                                {/* ▶ */}
+                                                {/* {isExpanded ? '▼' : '►'} */}
+
+                                                <svg
+                                                    className={`w-3.5 h-3.5 text-brandTextMuted transform transition-transform duration-200 ${isExpanded ? 'rotate-90' : ''}`}
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor"
+                                                >
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                                                </svg>
+
+                                            </span>
+                                            <h3 className="font-bold text-sm text-brandText hover:text-brandPrimary">
+                                                {group.subjectName}
+                                            </h3>
+                                        </div>
                                         <span className="text-xs bg-brandPrimary/10 text-brandPrimary px-2 py-0.5 rounded-full font-semibold">
                                             {group.cards.length} {group.cards.length === 1 ? 'card' : 'cards'}
                                         </span>
                                     </div>
 
                                     {/* Lista de cards pertencentes a este assunto */}
-                                    <div className="flex flex-col gap-2.5">
-                                        {group.cards.map((card) => (
-                                            <div key={card.id} className="p-4 bg-brandCard border border-brandBorder rounded-xl shadow-xs">
-                                                {/* Conteúdo do flashcard */}
-                                                <p className="font-semibold text-brandText text-sm">{card.front}</p>
-                                            </div>
-                                        ))}
-                                    </div>
+                                    {isExpanded && (
+                                        <div className="flex flex-col gap-2.5 pt-2 border-t border-brandBorder/60">
+                                            {group.cards.map((card) => (
+                                                <div key={card.id} className="p-3 bg-gray-50 border border-brandBorder rounded-lg shadow-2xs">
+                                                    {/* Conteúdo do flashcard */}
+                                                    <p className="font-semibold text-brandText text-sm">{card.front}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
-                            ))
+                            })
                         )}
                     </div>
                 </div>
