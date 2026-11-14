@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useCurrentTime } from '../../hooks/useCurrentTime'
 import { useFlashcards } from '../../hooks/useFlashcards';
 import { useSubjects } from '../../hooks/useSubjects';
+import { cardParaRevisar } from '../../functions/IsAvailable';
 import FlashcardItem from '../../components/flashcards/FlashcardItem';
 import FlashcardModal from '../../components/flashcards/FlashcardModal';
 import Button from '../../components/ui/Button';
@@ -23,29 +24,20 @@ export default function Flashcards() {
     // flashcards e loading vem do custom hook useFlashcards
     // Ao passar o subjectId, retorna os Fc do assunto em questão
     const { flashcards: flashcardsArray, setFlashcards: setFlashcardsArray, loading } = useFlashcards(subjectId);
-    const {subject: subjectAtual, loading: loadingSubjects} = useSubjects(subjectId);
+    const { subject: subjectAtual, loading: loadingSubjects } = useSubjects(subjectId);
     // console.log({subjectAtual:subjectAtual});
-    
+
     // state para resetar o card para o level 0 a partir do level 4
     const [reset_card, setReset_card] = useState(false)
-
-
 
     // Ordenar - Revisado para o final
     // useMemo para manter o resultado do sort e não ter que refazer a cada render
     const sortedFlashcards = useMemo(() => {
         return [...flashcardsArray].sort((a, b) => {
+            const aAvailable = cardParaRevisar(a, currentTime, false);
+            const bAvailable = cardParaRevisar(b, currentTime, false);
 
-            const isAvailable = (card) => {
-                if (card.status === 'MASTERED') return false;
-                if (!card.next_review_date) return true;
-                return new Date(card.next_review_date) <= currentTime;
-            };
-
-            const aAvailable = isAvailable(a);
-            const bAvailable = isAvailable(b);
-
-            if (aAvailable === bAvailable) return 0;
+            if (aAvailable == bAvailable) return 0;
             return aAvailable ? -1 : 1;
         });
     }, [flashcardsArray, currentTime]);

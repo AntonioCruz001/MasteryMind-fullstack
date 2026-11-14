@@ -159,7 +159,7 @@ export default function Review() {
                                     {/* Cabeçalho do Assunto */}
                                     <div
                                         onClick={() => toggleSubject(group.subjectId)}
-                                        // hover:opacity-80
+                                        
                                         className="flex justify-between items-center px-1 cursor-pointer select-none py-1  hover:opacity-80 transition-opacity"
                                     >
                                         <div className="flex items-center gap-2">
