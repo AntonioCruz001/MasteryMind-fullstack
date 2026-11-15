@@ -4,22 +4,22 @@ import api from '../services/api';
 export const AuthContext = createContext({});
 
 export function AuthProvider({ children }) {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+    // const [user, setUser] = useState(null);
+    // const [loading, setLoading] = useState(true); APAGAR?
 
-    useEffect(() => {
-        const token = localStorage.getItem('@Memorizer:token')
+    const [user, setUser] = useState(() => {
+        const token = localStorage.getItem('@Memorizer:token');
         if (token) {
             api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-            // Mantém a sessão ativa no estado ao recarregar
-            setUser({authenticated: true})
+            return { authenticated: true };
         }
-        setLoading(false);
-    }, []);
+        return null;
+    });
 
+    const [loading, setLoading] = useState(false);
 
     const login = async (email, password) => {
-        
+
         const response = await api.post('/auth/login', { email, password });
 
         const { access_token } = response.data;
