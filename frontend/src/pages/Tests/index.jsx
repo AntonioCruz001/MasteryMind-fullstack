@@ -160,7 +160,7 @@ export default function TestGroups() {
                             className='bg-brandCard p-5 rounded-xl border border-brandBorder shadow-sm flex justify-center items-center cursor-pointer hover:border-brandPrimary hover:shadow-md transition-all group'
                         >
                             <div className='content w-full flex flex-row justify-between items-center gap-2'>
-                                <span className='font-semibold text-brandText group-hover:text-brandPrimary transition-colors'>
+                                <span className='inline-block max-w-[195px] truncate font-semibold text-brandText group-hover:text-brandPrimary transition-colors'>
                                     {grupo.name}
                                 </span>
                                 <div className='flex flex-row items-center gap-3'>
