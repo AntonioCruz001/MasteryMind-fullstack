@@ -1,9 +1,18 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { AuthContext } from '../contexts/AuthContext';
+import { isTokenExpired } from '../functions/token';
 
 export function ProtectedRoute({ children }) {
-  const { user, loading } = useContext(AuthContext);
+  const { user, loading, logout } = useContext(AuthContext);
+  const token = localStorage.getItem('@Memorizer:token');
+  const expired = !token || isTokenExpired(token);
+
+  useEffect(() => {
+    if (user && expired) {
+      logout();
+    }
+  }, [user, expired, logout]);
 
   if (loading) {
     return (
@@ -13,10 +22,7 @@ export function ProtectedRoute({ children }) {
     );
   }
 
-  // Para teste do subject
-  // Retirar comment!!
-
-  if (!user) {
+  if (!user || expired) {
     return <Navigate to="/login" replace />;
   }
 
