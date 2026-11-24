@@ -5,7 +5,7 @@ export default function FlashcardContent({ fliped, handleClick, cardItem, feedba
     const card = cardItem;
     const currentTime = useCurrentTime(5000);
 
-    const liberarTeste = true;
+    const liberarTeste = false;
     const available = cardParaRevisar(card, currentTime, liberarTeste);
 
     const getCardStyle = () => {
