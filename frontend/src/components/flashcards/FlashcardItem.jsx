@@ -1,58 +1,102 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect, useRef } from "react";
 import { CardContex } from "../../pages/Flashcards";
 import Button from "../ui/Button";
 import FlashcardContent from "./FlashcardContent";
 import ReviewControls from "./ReviewControls";
-import edit_gear from '../../assets/edit/edit_gear.svg';
+import { getFeedbackMessage } from "../../functions/reviewFeedback";
+
+const FEEDBACK_DURATION_MS = 1200;
 
 export default function FlashcardItem({ cardItem }) {
     const [fliped, setFliped] = useState(false);
-    const [answered, setAnswered] = useState(false);
-    const func = useContext(CardContex);
+    const [feedback, setFeedback] = useState(null);
+    const timeoutRef = useRef(null);
 
+    const func = useContext(CardContex);
     const card = cardItem;
-    const setEdit = func.setEdit
-    const setModal = func.setModal
-    const reviewCard = func.reviewCard
+    const setEdit = func.setEdit;
+    const setModal = func.setModal;
+    const reviewCard = func.reviewCard;
+    const setCardFeedbackActive = func.setCardFeedbackActive;
+
+    useEffect(() => {
+        return () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+        };
+    }, []);
 
     function handleFlipClick() {
-        { fliped === false ? setFliped(true) : setFliped(false) }
+        if (feedback) return;
+        setFliped((prev) => !prev);
     }
 
-    // const cardLevelInicial = card.level
+    async function handleAnswerClick(resultado) {
+        if (!reviewCard) return;
+
+        setFliped(false);
+        const updatedCard = await reviewCard(card.id, resultado);
+        const message = getFeedbackMessage({
+            result: resultado,
+            updatedCard: updatedCard || card,
+            now: new Date(),
+        });
+
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+        }
+
+        setCardFeedbackActive?.(card.id, true);
+        setFeedback({
+            type: resultado,
+            message,
+        });
+
+        timeoutRef.current = setTimeout(() => {
+            setFeedback(null);
+            setCardFeedbackActive?.(card.id, false);
+        }, FEEDBACK_DURATION_MS);
+    }
 
     return (
-        // wrapper
         <div className="rounded-2xl bg-stone-100 shadow-sm flex flex-col gap-4 p-4">
-            {/* header */}
-            <div className="flex flex-row  px-4">
-                {/* <ReviewControls cardPontos={pontos} /> */}
+            <div className="flex flex-row px-4">
                 <ReviewControls cardItem={cardItem} />
-                <Button btnType="gear" className="w-6 flex justify-center items-center" onClick={() => { setEdit(card); setModal(true) }} />
+                <Button
+                    btnType="gear"
+                    className="w-6 flex justify-center items-center"
+                    onClick={() => { setEdit(card); setModal(true); }}
+                />
             </div>
 
-            {/* frente e verso - conteudo */}
-            <FlashcardContent cardItem={cardItem} fliped={fliped} handleClick={handleFlipClick} />
+            <FlashcardContent
+                cardItem={cardItem}
+                fliped={fliped}
+                feedback={feedback}
+                handleClick={handleFlipClick}
+            />
 
-
-            {/* Botoes */}
-            <div >
-                {fliped ?
+            <div>
+                {fliped && !feedback ? (
                     <div className="flex flex-row justify-center gap-8 h-5">
                         <Button
                             title={'Errei'}
                             btnType={'erro'}
                             className="text-xs py-0 px-3 h-5 leading-none flex items-center justify-center"
-                            onClick={() => { reviewCard(card.id, 'erro'); setFliped(false) }} />
+                            onClick={() => handleAnswerClick('erro')}
+                        />
                         <Button
                             title={'Acertei'}
                             btnType={'acerto'}
                             className="text-xs py-0 px-3 h-5 leading-none flex items-center justify-center"
-                            onClick={() => { reviewCard(card.id, 'acerto'); setFliped(false) }} />
-                    </div> : <div className="h-5">
-
-                    </div>}
+                            onClick={() => handleAnswerClick('acerto')}
+                        />
+                    </div>
+                ) : (
+                    <div className="h-5" />
+                )}
             </div>
         </div>
-    )
+    );
 }

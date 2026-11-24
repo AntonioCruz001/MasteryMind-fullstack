@@ -25,23 +25,48 @@ export default function Flashcards() {
     // Ao passar o subjectId, retorna os Fc do assunto em questão
     const { flashcards: flashcardsArray, setFlashcards: setFlashcardsArray, loading } = useFlashcards(subjectId);
     const { subject: subjectAtual, loading: loadingSubjects } = useSubjects(subjectId);
-    
+
     // console.log({subjectAtual:subjectAtual});
 
     // state para resetar o card para o level 0 a partir do level 4
     const [reset_card, setReset_card] = useState(false)
 
-    // Ordenar - Revisado para o final
-    // useMemo para manter o resultado do sort e não ter que refazer a cada render
+    const [feedbackCardIds, setFeedbackCardIds] = useState([]);
+
+    const markCardFeedback = (cardId, isActive) => {
+        setFeedbackCardIds((prev) => {
+            if (isActive) {
+                return prev.includes(cardId) ? prev : [...prev, cardId];
+            }
+            return prev.filter((id) => id !== cardId);
+        });
+    };
+
     const sortedFlashcards = useMemo(() => {
         return [...flashcardsArray].sort((a, b) => {
-            const aAvailable = cardParaRevisar(a, currentTime, false);
-            const bAvailable = cardParaRevisar(b, currentTime, false);
+            const aHold = feedbackCardIds.includes(a.id);
+            const bHold = feedbackCardIds.includes(b.id);
 
-            if (aAvailable == bAvailable) return 0;
+            const aAvailable = aHold || cardParaRevisar(a, currentTime, false);
+            const bAvailable = bHold || cardParaRevisar(b, currentTime, false);
+
+            if (aAvailable === bAvailable) return 0;
             return aAvailable ? -1 : 1;
         });
-    }, [flashcardsArray, currentTime]);
+    }, [flashcardsArray, currentTime, feedbackCardIds]);
+
+    // Ordenar - Revisado para o final
+    // useMemo para manter o resultado do sort e não ter que refazer a cada render
+
+    // const sortedFlashcards = useMemo(() => {
+    //     return [...flashcardsArray].sort((a, b) => {
+    //         const aAvailable = cardParaRevisar(a, currentTime, false);
+    //         const bAvailable = cardParaRevisar(b, currentTime, false);
+
+    //         if (aAvailable == bAvailable) return 0;
+    //         return aAvailable ? -1 : 1;
+    //     });
+    // }, [flashcardsArray, currentTime]);
 
     // api.put (update) e api.post (create) 
     const handleSaveCard = async (cardData) => {
@@ -98,22 +123,25 @@ export default function Flashcards() {
     }
 
     const handleReview = async (cardId, resultado) => {
-        if (!cardId) return;
+        if (!cardId) return null;
 
         try {
-            const response = await api.post(`/subjects/${subjectId}/flashcards/${cardId}/review`,
+            const response = await api.post(
+                `/subjects/${subjectId}/flashcards/${cardId}/review`,
                 { result: resultado }
-            )
+            );
             const cardUpdated = response.data;
 
-            setFlashcardsArray((prev) => (
-                prev.map((card) => card.id === cardId ? cardUpdated : card)
-            ))
+            setFlashcardsArray((prev) =>
+                prev.map((card) => (card.id === cardId ? cardUpdated : card))
+            );
 
+            return cardUpdated;
         } catch (error) {
             console.log('Erro ao revisar o card: ', error);
+            return null;
         }
-    }
+    };
 
     const handleResetCard = async (cardId) => {
         console.log("Acionou handleResetCard", cardId)
@@ -136,7 +164,8 @@ export default function Flashcards() {
         setModal: setIsModalOpen,
         setEdit: setEditingCard,
         setReset_card: setReset_card,
-        reviewCard: handleReview
+        reviewCard: handleReview,
+        setCardFeedbackActive: markCardFeedback,
     }
 
 

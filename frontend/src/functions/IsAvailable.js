@@ -1,26 +1,19 @@
-// Retorna true ou false 
+import { parseTargetDate } from './parseTargetDate';
+
 export const cardParaRevisar = (cardData, currentTime, liberarTeste) => {
     if (!cardData) return false;
     if (cardData.level >= 4 || cardData.status === "MASTERED") return false;
 
-    if (liberarTeste) { return true };
+    if (liberarTeste) return true;
 
-    if (cardData.status === "NEW") return true; // Novo cardData livre para estudo
+    if (cardData.status === "NEW") return true;
 
-    const dateStr = typeof cardData.next_review_date === 'string'
-        && !cardData.next_review_date.endsWith('Z')
-        && !cardData.next_review_date.includes('+')
-        ? `${cardData.next_review_date}Z`
-        : cardData.next_review_date;
+    if (!cardData.next_review_date) return true;
 
-    const reviewDate = new Date(dateStr);
-    const current = currentTime ? new Date(currentTime) : new Date();
+    const reviewDate = parseTargetDate(cardData.next_review_date);
+    if (!reviewDate || Number.isNaN(reviewDate.getTime())) return false;
 
-    // Normaliza ambas as datas para o início do dia civil (00:00:00.000)
-    reviewDate.setHours(0, 0, 0, 0);
-    current.setHours(0, 0, 0, 0);
+    const now = currentTime ? new Date(currentTime) : new Date();
 
-    // console.log({cardData:cardData, currentTime:currentTime, liberarTeste:liberarTeste});
-
-    return reviewDate <= current;
-}
+    return reviewDate.getTime() <= now.getTime();
+};

@@ -1,18 +1,21 @@
 import { cardParaRevisar } from '../../functions/IsAvailable';
 import { useCurrentTime } from "../../hooks/useCurrentTime";
 
-export default function FlashcardContent({ fliped, handleClick, cardItem, ...props }) {
-
-    // Recebendo o card atual do sortedFlashcards.map do Flashcards
+export default function FlashcardContent({ fliped, handleClick, cardItem, feedback = null, ...props }) {
     const card = cardItem;
-    const currentTime = useCurrentTime()
+    const currentTime = useCurrentTime(5000);
 
-
-    // Bloquear Cards Após Revisar
-    const liberarTeste = false;
+    const liberarTeste = true;
     const available = cardParaRevisar(card, currentTime, liberarTeste);
 
     const getCardStyle = () => {
+        if (feedback?.type === 'acerto') {
+            return 'bg-emerald-500 text-white border-2 border-emerald-600 scale-[1.01]';
+        }
+        if (feedback?.type === 'erro') {
+            return 'bg-red-500 text-white border-2 border-red-600 scale-[1.01]';
+        }
+
         if (available) {
             if (!fliped) {
                 return 'bg-amber-100 cursor-pointer hover:scale-[1.01]';
@@ -21,40 +24,54 @@ export default function FlashcardContent({ fliped, handleClick, cardItem, ...pro
             }
         }
 
-        if (card.status === "MASTERED") { return 'bg-brandSuccess text-white opacity-90 cursor-not-allowed'; }
-
-        return 'bg-stone-200  opacity-60 cursor-not-allowed'; // bg-stone-200
-    }
-
-    // Estilizar a partir do resultado do review
-    return <div
-        onClick={available ? handleClick : null}
-        {...props}
-        className={`min-h-25 flex flex-col 
-            justify-center rounded-2xl shadow 
-            shadow-taupe-700 transition-all 
-            ${getCardStyle()}`
+        if (card.status === "MASTERED") {
+            return 'bg-brandSuccess text-white opacity-90 cursor-not-allowed';
         }
-    >
-        {!available && (
-            <span className="text-xs text-center text-stone-800 font-semibold">
 
-                {/* Customizar texto para cada situação. Usando cores de erro e acerto, ou cores dos níveis. */}
-                {card.status === "MASTERED"
-                    ? 'Card Dominado!'
-                    : 'Em espera (Aguardando data de revisão)'}
-            </span>
-        )}
+        return 'bg-stone-200 opacity-60 cursor-not-allowed';
+    };
 
-        {!fliped ? <div className="text-center  whitespace-pre-wrap">
-            {card.front}
-            {/* {console.log('exibindo front')} */}
+    return (
+        <div
+            onClick={available && !feedback ? handleClick : null}
+            {...props}
+            className={`min-h-25 px-4 flex flex-col items-center
+                justify-center rounded-2xl shadow
+                shadow-taupe-700 transition-all duration-200
+                ${getCardStyle()}`}
+        >
+            {feedback ? (
+                <div className="flex flex-col items-center gap-1 text-center">
+                    <span className="text-sm font-bold tracking-wide">
+                        {feedback.type === 'acerto' ? 'Acertou!' : 'Errou!'}
+                    </span>
+                    {feedback.message && (
+                        <span className="text-xs font-semibold bg-black/15 px-3 py-1 rounded-full">
+                            {feedback.message}
+                        </span>
+                    )}
+                </div>
+            ) : (
+                <>
+                    {!available && (
+                        <span className="text-xs text-center text-stone-800 font-semibold">
+                            {card.status === "MASTERED"
+                                ? 'Card Dominado!'
+                                : 'Em espera (Aguardando data de revisão)'}
+                        </span>
+                    )}
 
-        </div> :
-            <div className="text-center  whitespace-pre-wrap">
-                {card.back}
-                {/* {console.log('exibindo back')} */}
-            </div>
-        }
-    </div>
+                    {!fliped ? (
+                        <div className="text-center whitespace-pre-wrap">
+                            {card.front}
+                        </div>
+                    ) : (
+                        <div className="text-center whitespace-pre-wrap">
+                            {card.back}
+                        </div>
+                    )}
+                </>
+            )}
+        </div>
+    );
 }
