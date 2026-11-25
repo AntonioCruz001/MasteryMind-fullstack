@@ -29,7 +29,7 @@ export default function HomeLayout() {
                 <div className="flex items-center gap-6">
                     <div className="flex items-center gap-3">
                         <button
-                            className="text-white  text-xl px-2 focus:outline-none cursor-pointer p-1 md:hidden hover:bg-teal-800 rounded-sm"
+                            className="text-white  text-xl px-2 focus:outline-none cursor-pointer p-1 hover:bg-teal-800 rounded-sm"
                             onClick={() => setIsMenuModalOpen(true)}
                             aria-label="Abrir menu"
                         >

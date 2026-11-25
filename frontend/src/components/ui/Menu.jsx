@@ -11,7 +11,7 @@ export default function Menu({ onClose, onCloseProfile }) {
         , [])
 
     return (createPortal(
-        <div className="w-1/2 md:w-1/3 h-full  fixed left-0 z-50
+        <div className="w-1/2 md:w-1/4 h-full  fixed left-0 z-50
                         flex flex-col items-center
                         bg-brandPrimary/98">
 
