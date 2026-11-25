@@ -26,8 +26,6 @@ export default function Flashcards() {
     const { flashcards: flashcardsArray, setFlashcards: setFlashcardsArray, loading } = useFlashcards(subjectId);
     const { subject: subjectAtual, loading: loadingSubjects } = useSubjects(subjectId);
 
-    // console.log({subjectAtual:subjectAtual});
-
     // state para resetar o card para o level 0 a partir do level 4
     const [reset_card, setReset_card] = useState(false)
 
@@ -42,6 +40,9 @@ export default function Flashcards() {
         });
     };
 
+
+    // Ordenar - Revisado para o final
+    // useMemo para manter o resultado do sort e não ter que refazer a cada render
     const sortedFlashcards = useMemo(() => {
         return [...flashcardsArray].sort((a, b) => {
             const aHold = feedbackCardIds.includes(a.id);
@@ -55,18 +56,7 @@ export default function Flashcards() {
         });
     }, [flashcardsArray, currentTime, feedbackCardIds]);
 
-    // Ordenar - Revisado para o final
-    // useMemo para manter o resultado do sort e não ter que refazer a cada render
 
-    // const sortedFlashcards = useMemo(() => {
-    //     return [...flashcardsArray].sort((a, b) => {
-    //         const aAvailable = cardParaRevisar(a, currentTime, false);
-    //         const bAvailable = cardParaRevisar(b, currentTime, false);
-
-    //         if (aAvailable == bAvailable) return 0;
-    //         return aAvailable ? -1 : 1;
-    //     });
-    // }, [flashcardsArray, currentTime]);
 
     // api.put (update) e api.post (create) 
     const handleSaveCard = async (cardData) => {
@@ -144,7 +134,6 @@ export default function Flashcards() {
     };
 
     const handleResetCard = async (cardId) => {
-        console.log("Acionou handleResetCard", cardId)
         if (!cardId) return
 
         try {
@@ -213,7 +202,6 @@ export default function Flashcards() {
         {isModalOpen &&
             <div>
                 <button onClick={() => setIsModalOpen(false)}>X</button>
-                {/* { isOpen, onClose, onSubmit, onDelete, initialData = null } */}
                 <FlashcardModal
                     isOpen={isModalOpen}
                     initialData={editingCard}

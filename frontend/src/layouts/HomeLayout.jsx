@@ -5,7 +5,13 @@ import AuthContext from '../contexts/AuthContext'
 import Button from '../components/ui/Button'
 import profileDefaultImage from '../assets/profile/profile-default.svg';
 
+import Menu from "../components/ui/Menu";
+import Profile from "../components/ui/Profile";
+
 export default function HomeLayout() {
+    const [isMenuModalOpen, setIsMenuModalOpen] = useState(false);
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
+
     const { logout } = useContext(AuthContext);
     const navigate = useNavigate();
 
@@ -23,7 +29,8 @@ export default function HomeLayout() {
                 <div className="flex items-center gap-6">
                     <div className="flex items-center gap-3">
                         <button
-                            className="text-white text-xl focus:outline-none cursor-pointer p-1 md:hidden"
+                            className="text-white  text-xl px-2 focus:outline-none cursor-pointer p-1 md:hidden hover:bg-teal-800 rounded-sm"
+                            onClick={() => setIsMenuModalOpen(true)}
                             aria-label="Abrir menu"
                         >
                             ☰
@@ -41,19 +48,26 @@ export default function HomeLayout() {
 
                 {/* Bloco Direito: Ações do Utilizador */}
                 <div className="flex items-center gap-2">
-                    <Button
+                    {/* <Button
                         onClick={handleLogout}
                         title={'Sair'}
-                        btnType={'criar'}
+                        btnType={'sair'}
                         className="bg-teal-700 hover:bg-teal-800 text-xs py-1.5 px-3"
-                    />
+                    /> */}
 
                     <div className="flex items-center p-1.5 justify-center 
                     w-8 h-8 rounded-full 
                     bg-gray-300 border border-white overflow-hidden
                     hover:cursor-pointer
-                    ">
-                        <img src={profileDefaultImage} alt="Perfil" className="w-full h-full object-contain" />
+                    "
+                        onClick={() => setIsProfileOpen(true)}>
+
+                        <img
+                            src={profileDefaultImage}
+                            alt="Perfil"
+                            className="w-full h-full object-contain cursor-pointer"
+                        />
+
                     </div>
                 </div>
             </header>
@@ -67,6 +81,12 @@ export default function HomeLayout() {
             <main className="flex-1 w-full max-w-md mx-auto p-4 pb-20">
                 <Outlet />
             </main>
+
+            {isMenuModalOpen && (<Menu onClose={setIsMenuModalOpen} onCloseProfile={setIsProfileOpen} />)}
+            {isProfileOpen && (<Profile onClose={setIsProfileOpen} onCloseMenu={setIsMenuModalOpen} onHandleLogout={handleLogout} />)}
+
         </div>
+
+
     );
 }
