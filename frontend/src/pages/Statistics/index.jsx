@@ -60,16 +60,6 @@ export default function Statistics() {
         <div className="flex flex-col gap-6">
 
           {/* Título da Página */}
-          {/* <div className="flex justify-between items-center bg-brandCard p-4 rounded-2xl border border-brandBorder shadow-xs">
-            <div>
-              <h2 className="text-xl font-bold text-brandText">Estatísticas</h2>
-              <p className="text-xs text-brandTextMuted">Progresso dos seus flashcards por nível</p>
-            </div>
-            <div className="text-right">
-              <span className="text-2xl font-extrabold text-brandPrimary">{totalCards}</span>
-              <p className="text-xs text-brandTextMuted">Total de Cards</p>
-            </div>
-          </div> */}
           <div className="flex justify-between items-center bg-brandCard p-4 rounded-2xl border border-brandBorder shadow-xs">
             <div>
               <h2 className="text-xl font-bold text-brandText">Estatísticas</h2>
@@ -79,7 +69,7 @@ export default function Statistics() {
             {/* Bloco da direita com fundo sutil para dar peso visual e equilíbrio */}
             <div className="text-right bg-brandPrimary/5 px-3.5 py-1.5 rounded-xl border border-brandPrimary/10">
               <span className="text-2xl font-extrabold text-brandPrimary">{totalCards}</span>
-              <p className="text-[10px] uppercase tracking-wider font-semibold text-brandTextMuted">Total de Cards</p>
+              <p className="text-[6px] md:text-[8px] lg:text-[10px] uppercase tracking-wider font-semibold text-brandTextMuted whitespace-nowrap">Total de Cards</p>
             </div>
           </div>
 

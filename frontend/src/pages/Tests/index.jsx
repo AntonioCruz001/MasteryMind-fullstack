@@ -33,6 +33,8 @@ export default function TestGroups() {
     const [editing, setEditing] = useState(false);
     const [editingGroup, setEditingGroup] = useState(null);
 
+    const [showInfo, setShowInfo] = useState(false);
+
     // Estados para o Modal de Resultados (Mockup)
     const [selectedGroupResults, setSelectedGroupResults] = useState([]);
     const [loadingResults, setLoadingResults] = useState(false);
@@ -127,23 +129,42 @@ export default function TestGroups() {
 
     return (
         <div className='flex flex-col w-full gap-6'>
-            <div className='flex justify-between items-center gap-2 bg-brandCard p-4 rounded-2xl border border-brandBorder shadow-xs'>
-                <div className='w-60'>
-                    <h2 className='text-xl font-bold text-brandText'>Grupos de Testes</h2>
-                    <p className='text-xs text-brandTextMuted'>Simulados personalizados sem impacto na repetição espaçada</p>
+            <div className='flex flex-col gap-1 bg-brandCard p-4 rounded-2xl border border-brandBorder'>
+                <div className='flex justify-between items-center gap-2  shadow-xs'>
+                    <div className='w-60'>
+                        <h2 className='text-lg sm:text-xl font-bold text-brandText'>Grupos de Testes</h2>
+                        <p className='hidden sm:block text-xs text-brandTextMuted'>Simulados personalizados sem impacto na repetição espaçada</p>
+                    </div>
+
+
+                    <Button
+                        title={"+ Novo Grupo"}
+                        btnType={'criar'}
+                        onClick={() => {
+                            setEditing(false);
+                            setEditingGroup(null);
+                            setGroupName('');
+                            setSelectedCards([]);
+                            setIsModalOpen(true);
+                        }}
+                    />
                 </div>
-                <Button
-                    title={"+ Novo Grupo"}
-                    btnType={'criar'}
-                    onClick={() => {
-                        setEditing(false);
-                        setEditingGroup(null);
-                        setGroupName('');
-                        setSelectedCards([]);
-                        setIsModalOpen(true);
-                    }}
-                />
+                <div className={`sm:hidden flex ${showInfo ? 'h-10 ' : 'h-5'} overflow-hidden  transition-all duration-200 ease-in-out justify-start gap-1`}>
+                    <button
+                        type="button"
+                        onClick={() => setShowInfo((prev) => !prev)}
+                        aria-expanded={showInfo}
+                        aria-label="Explicação sobre Grupos de Testes"
+                        className={`grow-0 shrink-0 sm:hidden inline-flex items-center justify-center w-5 h-5 p-0 leading-none text-[12px] font-bold text-gray-500 rounded-full bg-zinc-200 border border-solid border-gray-300 transition-opacity duration-200 ease-in-out ${showInfo ? 'opacity-100' : 'opacity-70'} cursor-pointer`}
+                    >
+                        i
+                    </button>
+                    {showInfo && <div className={`grow ${showInfo ? '' : 'hidden'} sm:hidden text-sm text-brandTextMuted`}>Simulados personalizados sem impacto na repetição espaçada</div>}
+                </div>
             </div>
+
+
+
 
             <div className='flex flex-col gap-3'>
                 {loading ? (
