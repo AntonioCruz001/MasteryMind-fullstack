@@ -9,13 +9,14 @@ const btnClasses = {
     sair: "group inline-flex items-center gap-2 bg-teal-700 hover:bg-teal-800 hover:text-red-200 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition-all text-xs cursor-pointer ",
     default: "",
     gear: "",
-    close: "group p-1 rounded-lg text-zinc-300 hover:text-[#005f5a] transition-colors cursor-pointer"
+    close: "group p-1 rounded-lg text-zinc-300 hover:text-[#005f5a] transition-colors cursor-pointer",
+    link:"bg-brandPrimary hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition-all text-sm cursor-pointer"
 }
 
 export default function Button({ type, className = "", btnType = "default", title = null, children = null, ...props }) {
 
     return (
-        <button type={type || "button"} className={`${btnClasses[btnType]} ${className}`.trim()} {...props}>
+        <button type={type || "button"} className={`${btnClasses[btnType]}  ${className}`.trim()} {...props}>
             {title ? title : children}
 
             {btnType == 'gear' ? <img className='w-4 h-4  object-contain hover:animate-spin' src={edit_gear} alt="edit" /> : ''}

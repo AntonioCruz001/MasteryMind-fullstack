@@ -28,14 +28,16 @@ export default function Menu({ onClose, onCloseProfile }) {
             </div>
 
 
-            <ul className="w-full mt-8 flex flex-col gap-3 text-zinc-300  justify-center items-start">
-                <li className="w-full hover:bg-brandNavHoverBg">Estatísticas</li>
-                <li className="w-full hover:bg-brandNavHoverBg">Calendário</li>
-                <li className="w-full hover:bg-brandNavHoverBg">Metas</li>
-                <li className="w-full hover:bg-brandNavHoverBg">Pontos Fracos</li>
-                <li className="w-full hover:bg-brandNavHoverBg">Histórico</li>
-                <li className="w-full hover:bg-brandNavHoverBg">Testes</li>
-            </ul>
+            <div className="w-full ">
+                <ul className=" mt-8 ml-6 flex flex-col gap-3 text-zinc-300  justify-center items-start">
+                    <li className="w-full hover:bg-brandNavHoverBg hover:rounded-sm px-1">Estatísticas</li>
+                    <li className="w-full hover:bg-brandNavHoverBg hover:rounded-sm px-1">Calendário</li>
+                    <li className="w-full hover:bg-brandNavHoverBg hover:rounded-sm px-1">Metas</li>
+                    <li className="w-full hover:bg-brandNavHoverBg hover:rounded-sm px-1">Pontos Fracos</li>
+                    <li className="w-full hover:bg-brandNavHoverBg hover:rounded-sm px-1">Histórico</li>
+                    <li className="w-full hover:bg-brandNavHoverBg hover:rounded-sm px-1">Testes</li>
+                </ul>
+            </div>
 
         </div>, document.getElementById('modal'))
     )

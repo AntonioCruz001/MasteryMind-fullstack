@@ -25,20 +25,22 @@ export default function Profile({ onClose, onCloseMenu, onHandleLogout }) {
 
             <span>Nome</span>
 
-            <ul className="w-full mt-8 flex flex-col gap-3 text-zinc-300 justify-center items-start">
-                <li className="w-full hover:bg-brandNavHoverBg">Conta</li>
-                <li className="w-full hover:bg-brandNavHoverBg">Tema</li>
-                <li className="w-full hover:bg-brandNavHoverBg">Preferências</li>
-                <li className="w-full hover:bg-brandNavHoverBg">Exportar / Backup</li>
-                <li className="w-full hover:bg-brandNavHoverBg">Ajuda</li>
-                <li className="w-full hover:bg-brandNavHoverBg">Configurações</li>
-                <Button
-                    onClick={() => onHandleLogout()}
-                    title={'Sair'}
-                    btnType={'sair'}
-                    className="bg-teal-700 hover:bg-teal-800 text-xs py-1.5 px-3"
-                />
-            </ul>
+            <div className="w-full">
+                <ul className=" mt-8 ml-6 flex flex-col gap-3 text-zinc-300 justify-center items-start">
+                    <li className="w-full hover:bg-brandNavHoverBg hover:rounded-sm px-1">Conta</li>
+                    <li className="w-full hover:bg-brandNavHoverBg hover:rounded-sm px-1">Tema</li>
+                    <li className="w-full hover:bg-brandNavHoverBg hover:rounded-sm px-1">Preferências</li>
+                    <li className="w-full hover:bg-brandNavHoverBg hover:rounded-sm px-1">Exportar / Backup</li>
+                    <li className="w-full hover:bg-brandNavHoverBg hover:rounded-sm px-1">Ajuda</li>
+                    <li className="w-full hover:bg-brandNavHoverBg hover:rounded-sm px-1">Configurações</li>
+                    <Button
+                        onClick={() => onHandleLogout()}
+                        title={'Sair'}
+                        btnType={'sair'}
+                        className="bg-teal-700 hover:bg-teal-800 text-xs py-1.5 px-3 mt-4"
+                    />
+                </ul>
+            </div>
 
 
         </div>, document.getElementById('modal')))

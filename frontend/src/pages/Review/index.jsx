@@ -1,6 +1,8 @@
 import { useState, useMemo } from "react";
 import { useCurrentTime } from "../../hooks/useCurrentTime";
 import { useFlashcards } from "../../hooks/useFlashcards";
+import Button from "../../components/ui/Button";
+import { Link } from 'react-router-dom';
 
 const tabs = [
     { id: 'HOJE', label: 'Hoje' },
@@ -156,34 +158,42 @@ export default function Review() {
                                 const isExpanded = expandedSubjects[group.subjectId] || false
 
                                 return <div key={group.subjectId} className="flex flex-col gap-3">
-                                    {/* Cabeçalho do Assunto */}
+                                    {/* Container do Título do Assunto com cards e botão*/}
                                     <div
-                                        onClick={() => toggleSubject(group.subjectId)}
-                                        
-                                        className="flex justify-between items-center px-1 cursor-pointer select-none py-1  hover:opacity-80 transition-opacity"
+                                        className="flex justify-between items-center px-1 cursor-pointer select-none py-1 "
                                     >
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-xs text-brandTextMuted font-bold">
-                                                {/* ▶ */}
-                                                {/* {isExpanded ? '▼' : '►'} */}
+                                        {/* Subcontainer Título + card count */}
+                                        <div className="w-full flex flex-row justify-between items-center  hover:opacity-80 transition-opacity mr-4" onClick={() => toggleSubject(group.subjectId)}>
 
-                                                <svg
-                                                    className={`w-3.5 h-3.5 text-brandTextMuted transform transition-transform duration-200 ${isExpanded ? 'rotate-90' : ''}`}
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                    stroke="currentColor"
-                                                >
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                                                </svg>
+                                            {/* SubContainer exclusivo do título */}
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-xs text-brandTextMuted font-bold">
+                                                    {/* ▶ */}
+                                                    {/* {isExpanded ? '▼' : '►'} */}
 
+                                                    <svg
+                                                        className={`w-3.5 h-3.5 text-brandTextMuted transform transition-transform duration-200 ${isExpanded ? 'rotate-90' : ''}`}
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        stroke="currentColor"
+                                                    >
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                                                    </svg>
+
+                                                </span>
+                                                <h3 className="font-bold text-sm text-brandText hover:text-brandPrimary">
+                                                    {group.subjectName}
+                                                </h3>
+                                            </div>
+
+                                            <span className="text-xs bg-brandPrimary/10 text-brandPrimary px-2 py-0.5 rounded-full font-semibold">
+                                                {group.cards.length} {group.cards.length === 1 ? 'card' : 'cards'}
                                             </span>
-                                            <h3 className="font-bold text-sm text-brandText hover:text-brandPrimary">
-                                                {group.subjectName}
-                                            </h3>
                                         </div>
-                                        <span className="text-xs bg-brandPrimary/10 text-brandPrimary px-2 py-0.5 rounded-full font-semibold">
-                                            {group.cards.length} {group.cards.length === 1 ? 'card' : 'cards'}
-                                        </span>
+
+                                        <Link to={`/home/subjects/${group.subjectId}/flashcards`}>
+                                            <Button btnType="link" className="text-xs w-38" title={"Ir para Assunto >"} />
+                                        </Link>
                                     </div>
 
                                     {/* Lista de cards pertencentes a este assunto */}
